@@ -71,9 +71,6 @@ function Dashboard() {
               <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
                 RFID-Based Student Attendance Portal
               </h1>
-              <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl">
-                Integrated academic implementation covering REST APIs, React state management & hooks, Spring Boot backend, and Hibernate JPA persistence.
-              </p>
             </div>
 
             <div className="flex items-center space-x-3">
@@ -143,11 +140,7 @@ function Dashboard() {
 
       {/* Footer */}
       <footer className="border-t border-slate-800/80 bg-slate-950/80 py-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <div>
-            <p>SmartLab RFID Attendance System &bull; University Lab Course</p>
-            <p className="text-[11px] text-slate-600">Built with Spring Boot 3, Spring Data JPA, H2 In-Memory DB, React 18, and Vite</p>
-          </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center text-xs text-slate-500">
           <div className="flex items-center space-x-4">
             <span className="font-mono text-cyan-400/80">Backend: http://localhost:8080</span>
             <span className="text-slate-700">|</span>
