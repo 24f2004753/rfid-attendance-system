@@ -1,0 +1,419 @@
+{
+  "info": {
+    "_postman_id": "7b8f9e21-d419-4cb5-b467-93e15fa68923",
+    "name": "RFID Attendance System - Academic Lab Experiments (Expt 1 & 6)",
+    "description": "Complete REST API Testing Collection for University Lab Course.\nSatisfies Expt 1 (LO1: REST Architecture, CRUD, and Postman testing) and Expt 6 (LO4: Spring Boot Backend CRUD).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "testStudentId",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Student Management (CRUD)",
+      "description": "Expt 1 & 6: Student entity management endpoints using standard HTTP verbs (GET, POST, PUT, DELETE).",
+      "item": [
+        {
+          "name": "GET All Students",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is a JSON array', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(Array.isArray(jsonData)).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students"]
+            },
+            "description": "Retrieves the full list of enrolled students from the H2 database."
+          },
+          "response": []
+        },
+        {
+          "name": "GET Student By ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK or 404', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/students/{{testStudentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students", "{{testStudentId}}"]
+            },
+            "description": "Retrieves a single student's details using their unique primary key ID."
+          },
+          "response": []
+        },
+        {
+          "name": "POST Create New Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Student created with status 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Returns student ID and valid fields', function () {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res).to.have.property('id');",
+                  "    pm.expect(res.name).to.eql('Vikramaditya Rao');",
+                  "    pm.environment.set('createdStudentId', res.id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Vikramaditya Rao\",\n  \"rollNo\": \"CS2024-099\",\n  \"rfidTagId\": \"TAG-V999\",\n  \"department\": \"Computer Science & Engineering\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students"]
+            },
+            "description": "Registers a new student into the university database with unique rollNo and rfidTagId."
+          },
+          "response": []
+        },
+        {
+          "name": "PUT Update Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Department is updated', function () {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.department).to.eql('Artificial Intelligence & Data Science');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Aarav Sharma\",\n  \"rollNo\": \"CS2024-001\",\n  \"rfidTagId\": \"TAG-A101\",\n  \"department\": \"Artificial Intelligence & Data Science\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/students/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students", "1"]
+            },
+            "description": "Updates details of student with ID 1."
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 204 No Content', function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/students/5",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students", "5"]
+            },
+            "description": "Deletes student with ID 5 from the database."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. RFID Attendance & Verification",
+      "description": "Expt 1 & 6: Business logic endpoints for physical/simulated RFID card taps and reporting.",
+      "item": [
+        {
+          "name": "POST RFID Card Scan (Success 201)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Scan returned 201 Created or 409 if already checked in', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([201, 409]);",
+                  "});",
+                  "if (pm.response.code === 201) {",
+                  "    const data = pm.response.json();",
+                  "    pm.expect(data).to.have.property('id');",
+                  "    pm.expect(data).to.have.property('status');",
+                  "    pm.expect(['PRESENT', 'LATE']).to.include(data.status);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rfidTagId\": \"TAG-A101\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/attendance/scan",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attendance", "scan"]
+            },
+            "description": "Simulates an RFID card tap for student Aarav Sharma (TAG-A101). Returns status PRESENT (or LATE after 09:30 AM)."
+          },
+          "response": []
+        },
+        {
+          "name": "POST RFID Card Scan (Duplicate Check 409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Duplicate scan returns 409 Conflict', function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rfidTagId\": \"TAG-A101\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/attendance/scan",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attendance", "scan"]
+            },
+            "description": "Tests business rule idempotency. Retapping an already checked-in student on the same day rejects with HTTP 409."
+          },
+          "response": []
+        },
+        {
+          "name": "POST RFID Card Scan (Unregistered Tag 404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Unregistered card returns 404 Not Found', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rfidTagId\": \"UNKNOWN-999\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/attendance/scan",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attendance", "scan"]
+            },
+            "description": "Tests access denial. Transmitting an unknown or malicious RFID tag returns HTTP 404."
+          },
+          "response": []
+        },
+        {
+          "name": "GET Today's Attendance Feed",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Feed is a list sorted reverse chronologically', function () {",
+                  "    const records = pm.response.json();",
+                  "    pm.expect(Array.isArray(records)).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/attendance/today",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attendance", "today"]
+            },
+            "description": "Retrieves all verified attendance events recorded for today's date."
+          },
+          "response": []
+        },
+        {
+          "name": "GET Attendance Statistics",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response includes analytical metrics', function () {",
+                  "    const data = pm.response.json();",
+                  "    pm.expect(data).to.have.property('totalEnrolled');",
+                  "    pm.expect(data).to.have.property('totalPresentToday');",
+                  "    pm.expect(data).to.have.property('attendancePercentage');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/attendance/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attendance", "stats"]
+            },
+            "description": "Computes real-time analytical metrics: total enrolled, present count today, attendance percentage, on-time vs late breakdown."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
