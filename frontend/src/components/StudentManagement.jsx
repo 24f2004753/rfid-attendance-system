@@ -1,10 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { useAttendance } from '../context/AttendanceContext';
-import { UserPlus, Search, Trash2, IdCard, Check, AlertCircle, Sparkles } from 'lucide-react';
+import { UserPlus, Search, Trash2, IdCard, Check, AlertCircle, Sparkles, X } from 'lucide-react';
 
 /**
  * StudentManagement Component
- * Styled in Cream, Mauve, and White.
+ * Styled in Cream, Mauve (~30%), and White.
  */
 export default function StudentManagement({ onSelectCardForSimulation }) {
   const { students, addStudent, deleteStudent, loading } = useAttendance();
@@ -131,11 +131,11 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
         <div>
           <div className="flex items-center space-x-2">
             <h2 className="text-xl font-bold text-mauve-950 tracking-tight">Student Directory</h2>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-mauve-100 text-mauve-800 font-mono font-medium">
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-mauve-100 text-mauve-900 border border-mauve-300 font-mono font-bold shadow-2xs">
               {filteredStudents.length} / {students.length} Enrolled
             </span>
           </div>
-          <p className="text-xs text-mauve-700/80 mt-0.5">
+          <p className="text-xs text-mauve-700 mt-0.5 font-medium">
             Manage enrolled students, assign hardware RFID badges, and verify identities
           </p>
         </div>
@@ -143,20 +143,20 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
         <div className="flex items-center space-x-3">
           {/* Search Bar */}
           <div className="relative">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-mauve-400" />
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-mauve-500" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search name, roll no, tag..."
-              className="pl-9 pr-4 py-2 w-52 sm:w-64 text-xs bg-cream-50 border border-cream-300 rounded-xl text-mauve-950 placeholder-mauve-400 focus:outline-none focus:border-mauve-500 focus:ring-1 focus:ring-mauve-500 transition-all"
+              className="pl-9 pr-4 py-2 w-52 sm:w-64 text-xs bg-cream-50 border border-mauve-200 rounded-xl text-mauve-950 placeholder-mauve-400 focus:outline-none focus:border-mauve-600 focus:ring-1 focus:ring-mauve-600 transition-all shadow-2xs"
             />
           </div>
 
           {/* Add Student Button */}
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold bg-mauve-600 hover:bg-mauve-700 text-white transition-all shadow-md shadow-mauve-600/20 active:scale-95"
+            className="flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold bg-mauve-700 hover:bg-mauve-800 text-white transition-all shadow-md shadow-mauve-800/25 active:scale-95"
           >
             <UserPlus className="h-4 w-4" />
             <span>Add Student</span>
@@ -165,9 +165,9 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
       </div>
 
       {/* Students Table */}
-      <div className="overflow-x-auto rounded-xl border border-cream-300 bg-white">
-        <table className="w-full text-left text-xs text-mauve-900">
-          <thead className="bg-cream-100 text-[11px] uppercase tracking-wider text-mauve-700 font-semibold border-b border-cream-300">
+      <div className="overflow-x-auto rounded-xl border border-mauve-200 bg-white shadow-2xs">
+        <table className="w-full text-left text-xs text-mauve-950">
+          <thead className="bg-mauve-100/90 text-[11px] uppercase tracking-wider text-mauve-950 font-bold border-b border-mauve-200">
             <tr>
               <th className="py-3 px-4">Student</th>
               <th className="py-3 px-4">Roll Number</th>
@@ -179,61 +179,61 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
           <tbody className="divide-y divide-cream-200 font-medium">
             {loading ? (
               <tr>
-                <td colSpan="5" className="py-8 text-center text-mauve-500">
+                <td colSpan="5" className="py-8 text-center text-mauve-600">
                   <div className="flex items-center justify-center space-x-2">
-                    <div className="h-4 w-4 border-2 border-mauve-600 border-t-transparent rounded-full animate-spin"></div>
+                    <div className="h-4 w-4 border-2 border-mauve-700 border-t-transparent rounded-full animate-spin"></div>
                     <span>Loading student registry from backend...</span>
                   </div>
                 </td>
               </tr>
             ) : filteredStudents.length === 0 ? (
               <tr>
-                <td colSpan="5" className="py-8 text-center text-mauve-500">
+                <td colSpan="5" className="py-8 text-center text-mauve-600">
                   No students found matching your query.
                 </td>
               </tr>
             ) : (
               filteredStudents.map((student) => (
-                <tr key={student.id} className="hover:bg-cream-50/80 transition-colors">
+                <tr key={student.id} className="hover:bg-mauve-50/50 transition-colors">
                   
                   {/* Name + Avatar */}
                   <td className="py-3 px-4">
                     <div className="flex items-center space-x-3">
-                      <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-mauve-500 to-mauve-700 text-white font-bold flex items-center justify-center text-xs shadow-sm">
+                      <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-mauve-700 to-mauve-900 text-white font-bold flex items-center justify-center text-xs shadow-sm">
                         {student.name.charAt(0)}
                       </div>
                       <div>
-                        <div className="font-semibold text-mauve-950">{student.name}</div>
-                        <div className="text-[10px] text-mauve-500 font-mono">ID: #{student.id}</div>
+                        <div className="font-bold text-mauve-950">{student.name}</div>
+                        <div className="text-[10px] text-mauve-600 font-mono">ID: #{student.id}</div>
                       </div>
                     </div>
                   </td>
 
                   {/* Roll Number */}
-                  <td className="py-3 px-4 font-mono font-medium text-mauve-900">
-                    <span className="px-2 py-1 rounded-md bg-cream-100 border border-cream-300">
+                  <td className="py-3 px-4 font-mono font-semibold text-mauve-950">
+                    <span className="px-2.5 py-1 rounded-md bg-cream-100 border border-mauve-200">
                       {student.rollNo}
                     </span>
                   </td>
 
                   {/* Department */}
-                  <td className="py-3 px-4 text-mauve-700">
+                  <td className="py-3 px-4 text-mauve-800">
                     {student.department}
                   </td>
 
-                  {/* RFID Tag Badge */}
+                  {/* RFID Tag Badge (Mauve Pill - Not White) */}
                   <td className="py-3 px-4">
                     <button
                       onClick={() => onSelectCardForSimulation && onSelectCardForSimulation(student.rfidTagId)}
-                      className="group flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-mauve-50 border border-mauve-200 text-mauve-800 font-mono hover:bg-mauve-100 hover:border-mauve-400 transition-all shadow-2xs"
+                      className="group flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-mauve-100 hover:bg-mauve-200 border border-mauve-300 text-mauve-900 font-mono font-bold transition-all shadow-2xs"
                       title="Click to simulate tap in Badge Scanner"
                     >
-                      <IdCard className="h-3.5 w-3.5 text-mauve-600 group-hover:scale-110 transition-transform" />
+                      <IdCard className="h-3.5 w-3.5 text-mauve-700 group-hover:scale-110 transition-transform" />
                       <span>{student.rfidTagId}</span>
                     </button>
                   </td>
 
-                  {/* Actions (Delete) */}
+                  {/* Actions (Delete - Mauve tinted, not white) */}
                   <td className="py-3 px-4 text-right">
                     <button
                       onClick={() => {
@@ -241,7 +241,7 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
                           deleteStudent(student.id, student.name);
                         }
                       }}
-                      className="p-1.5 rounded-lg text-mauve-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                      className="p-1.5 rounded-lg bg-cream-100 hover:bg-rose-100 border border-cream-300 hover:border-rose-300 text-mauve-600 hover:text-rose-700 transition-colors shadow-2xs"
                       title="Delete Student"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -257,28 +257,28 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
 
       {/* Add Student Form Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-mauve-950/40 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="w-full max-w-lg bg-white rounded-2xl p-6 border border-cream-300 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-mauve-950/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-lg bg-white rounded-2xl border border-mauve-300 shadow-2xl overflow-hidden">
             
-            <div className="flex items-center justify-between pb-4 border-b border-cream-300">
+            <div className="flex items-center justify-between p-6 border-b border-mauve-200 bg-mauve-100/70">
               <div>
                 <h3 className="text-lg font-bold text-mauve-950">Enroll New Student</h3>
-                <p className="text-xs text-mauve-600">Controlled inputs with real-time validation</p>
+                <p className="text-xs text-mauve-700 font-medium">Controlled inputs with real-time validation</p>
               </div>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="text-mauve-400 hover:text-mauve-800 p-1 rounded-lg hover:bg-cream-100"
+                className="text-mauve-700 hover:text-mauve-950 p-1.5 rounded-lg bg-mauve-200/60 hover:bg-mauve-200 border border-mauve-300 transition-colors shadow-2xs"
               >
-                ✕
+                <X className="h-4 w-4" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="mt-5 space-y-4">
+            <form onSubmit={handleSubmit} className="p-6 space-y-4">
               
               {/* Full Name */}
               <div>
-                <label className="block text-xs font-semibold text-mauve-800 mb-1">
-                  Full Student Name <span className="text-rose-500">*</span>
+                <label className="block text-xs font-bold text-mauve-900 mb-1">
+                  Full Student Name <span className="text-rose-600">*</span>
                 </label>
                 <div className="relative">
                   <input
@@ -293,7 +293,7 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
                         ? 'border-rose-400 focus:ring-rose-400'
                         : touched.name && !validationErrors.name
                         ? 'border-emerald-400 focus:ring-emerald-400'
-                        : 'border-cream-300 focus:border-mauve-500'
+                        : 'border-mauve-300 focus:border-mauve-600'
                     } text-mauve-950 placeholder-mauve-400 focus:outline-none focus:ring-1 transition-all`}
                   />
                   {touched.name && (
@@ -307,7 +307,7 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
                   )}
                 </div>
                 {touched.name && validationErrors.name && (
-                  <p className="mt-1 text-[11px] text-rose-500">
+                  <p className="mt-1 text-[11px] text-rose-600 font-medium">
                     {validationErrors.name}
                   </p>
                 )}
@@ -315,8 +315,8 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
 
               {/* Roll Number */}
               <div>
-                <label className="block text-xs font-semibold text-mauve-800 mb-1">
-                  Roll Number <span className="text-rose-500">*</span>
+                <label className="block text-xs font-bold text-mauve-900 mb-1">
+                  Roll Number <span className="text-rose-600">*</span>
                 </label>
                 <div className="relative">
                   <input
@@ -331,7 +331,7 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
                         ? 'border-rose-400 focus:ring-rose-400'
                         : touched.rollNo && !validationErrors.rollNo
                         ? 'border-emerald-400 focus:ring-emerald-400'
-                        : 'border-cream-300 focus:border-mauve-500'
+                        : 'border-mauve-300 focus:border-mauve-600'
                     } text-mauve-950 placeholder-mauve-400 focus:outline-none focus:ring-1 transition-all`}
                   />
                   {touched.rollNo && (
@@ -345,7 +345,7 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
                   )}
                 </div>
                 {touched.rollNo && validationErrors.rollNo && (
-                  <p className="mt-1 text-[11px] text-rose-500">
+                  <p className="mt-1 text-[11px] text-rose-600 font-medium">
                     {validationErrors.rollNo}
                   </p>
                 )}
@@ -354,15 +354,15 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
               {/* RFID Tag ID */}
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-semibold text-mauve-800">
-                    Hardware RFID Tag ID <span className="text-rose-500">*</span>
+                  <label className="text-xs font-bold text-mauve-900">
+                    Hardware RFID Tag ID <span className="text-rose-600">*</span>
                   </label>
                   <button
                     type="button"
                     onClick={handleAutoGenerateTag}
-                    className="flex items-center space-x-1 text-[10px] text-mauve-600 hover:text-mauve-800 font-semibold"
+                    className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-mauve-100 hover:bg-mauve-200 border border-mauve-300 text-[11px] text-mauve-900 font-semibold transition-colors shadow-2xs"
                   >
-                    <Sparkles className="h-3 w-3 text-mauve-500" />
+                    <Sparkles className="h-3 w-3 text-mauve-700" />
                     <span>Auto-Generate Hex</span>
                   </button>
                 </div>
@@ -379,7 +379,7 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
                         ? 'border-rose-400 focus:ring-rose-400'
                         : touched.rfidTagId && !validationErrors.rfidTagId
                         ? 'border-emerald-400 focus:ring-emerald-400'
-                        : 'border-cream-300 focus:border-mauve-500'
+                        : 'border-mauve-300 focus:border-mauve-600'
                     } text-mauve-950 placeholder-mauve-400 focus:outline-none focus:ring-1 transition-all`}
                   />
                   {touched.rfidTagId && (
@@ -393,7 +393,7 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
                   )}
                 </div>
                 {touched.rfidTagId && validationErrors.rfidTagId && (
-                  <p className="mt-1 text-[11px] text-rose-500">
+                  <p className="mt-1 text-[11px] text-rose-600 font-medium">
                     {validationErrors.rfidTagId}
                   </p>
                 )}
@@ -401,14 +401,14 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
 
               {/* Department */}
               <div>
-                <label className="block text-xs font-semibold text-mauve-800 mb-1">
-                  Department <span className="text-rose-500">*</span>
+                <label className="block text-xs font-bold text-mauve-900 mb-1">
+                  Department <span className="text-rose-600">*</span>
                 </label>
                 <select
                   name="department"
                   value={formData.department}
                   onChange={handleChange}
-                  className="w-full px-3.5 py-2.5 rounded-xl text-xs bg-cream-50 border border-cream-300 text-mauve-950 focus:outline-none focus:border-mauve-500 transition-all"
+                  className="w-full px-3.5 py-2.5 rounded-xl text-xs bg-cream-50 border border-mauve-300 text-mauve-950 focus:outline-none focus:border-mauve-600 transition-all font-medium"
                 >
                   <option value="Computer Science & Engineering">Computer Science & Engineering</option>
                   <option value="Information Technology">Information Technology</option>
@@ -419,22 +419,22 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
                 </select>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-cream-300">
+              {/* Action Buttons (Non-white cancel button) */}
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-mauve-200">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-medium text-mauve-700 hover:bg-cream-100 transition-colors"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold bg-mauve-100 hover:bg-mauve-200 border border-mauve-300 text-mauve-900 transition-colors shadow-2xs"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={!isFormValid}
-                  className={`px-5 py-2 rounded-xl text-xs font-semibold transition-all ${
+                  className={`px-5 py-2 rounded-xl text-xs font-bold transition-all ${
                     isFormValid
-                      ? 'bg-mauve-600 hover:bg-mauve-700 text-white shadow-md shadow-mauve-600/20 active:scale-95'
-                      : 'bg-cream-200 text-mauve-400 cursor-not-allowed'
+                      ? 'bg-mauve-700 hover:bg-mauve-800 text-white shadow-md shadow-mauve-800/25 active:scale-95'
+                      : 'bg-cream-200 text-mauve-400 cursor-not-allowed border border-cream-300'
                   }`}
                 >
                   Register Student
