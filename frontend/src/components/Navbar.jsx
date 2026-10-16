@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAttendance } from '../context/AttendanceContext';
-import { Radio, RefreshCw, Cpu, Award } from 'lucide-react';
+import { Radio, RefreshCw, Cpu } from 'lucide-react';
 
 export default function Navbar({ onOpenSimulator }) {
   const { autoRefresh, setAutoRefresh, refreshAllData, loading } = useAttendance();
@@ -24,29 +24,6 @@ export default function Navbar({ onOpenSimulator }) {
               </div>
               <p className="text-xs text-slate-400">Autonomous Student Attendance System</p>
             </div>
-          </div>
-
-          {/* Academic Experiments Badge Bar */}
-          <div className="hidden lg:flex items-center space-x-1.5 text-xs">
-            <span className="flex items-center space-x-1 text-slate-400 mr-2">
-              <Award className="h-3.5 w-3.5 text-amber-400" />
-              <span>Lab Compliance:</span>
-            </span>
-            <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-300 font-mono" title="Core REST Architecture & Postman">
-              Expt 1 (LO1)
-            </span>
-            <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-300 font-mono" title="React JSX & Components">
-              Expt 2 (LO2)
-            </span>
-            <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-300 font-mono" title="Hooks, Forms & Context API">
-              Expt 3 (LO2)
-            </span>
-            <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-300 font-mono" title="Spring Boot RESTful APIs">
-              Expt 6 (LO4)
-            </span>
-            <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-300 font-mono" title="Spring Data JPA & Hibernate">
-              Expt 7 (LO4)
-            </span>
           </div>
 
           {/* Right Action Controls */}
