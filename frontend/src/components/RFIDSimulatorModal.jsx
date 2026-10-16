@@ -1,23 +1,52 @@
 import React, { useState } from 'react';
 import { useAttendance } from '../context/AttendanceContext';
-import { Radio, Send, CheckCircle2, Cpu, Sparkles, X } from 'lucide-react';
+import { Radio, Send, CheckCircle2, Cpu, Sparkles, X, Lock, ShieldCheck, AlertCircle } from 'lucide-react';
 
 /**
  * RFIDSimulatorModal Component
- * Styled in Cream (#F5EFEB), Mauve (#6E3B61), and Crisp White.
+ * Implements Role-Based Department Restrictions:
+ * - HOD: Can mark anyone present across all branches.
+ * - ME Faculty: Can ONLY mark Mechanical Engineering students.
+ * - CE Faculty: Can ONLY mark Computer Engineering students.
  */
 export default function RFIDSimulatorModal({ isOpen, onClose, preselectedTag }) {
-  const { students, logs, triggerScan, isScanning } = useAttendance();
+  const { students, logs, triggerScan, isScanning, currentUser, showToast } = useAttendance();
   const [customTag, setCustomTag] = useState(preselectedTag || '');
   const [activeTappedTag, setActiveTappedTag] = useState(null);
 
   if (!isOpen) return null;
 
   const attendedRolls = new Set(logs.map((l) => l.student?.rollNo));
+  const isHOD = currentUser?.role === 'HOD';
 
-  const handleCardTap = async (tagId) => {
-    setActiveTappedTag(tagId);
-    await triggerScan(tagId);
+  // Department Authorization Check for physical/simulated card tap
+  const isStudentAuthorizedForUser = (student) => {
+    if (isHOD) return true;
+    const dept = student.department?.toLowerCase() || '';
+    const userDept = currentUser?.department?.toLowerCase() || '';
+
+    if (userDept.includes('mechanical') && dept.includes('mechanical')) {
+      return true;
+    }
+    if ((userDept.includes('computer') || userDept.includes('ce')) &&
+        (dept.includes('computer') || dept.includes('ce') || dept.includes('cse'))) {
+      return true;
+    }
+    return false;
+  };
+
+  const handleCardTap = async (student) => {
+    if (!isStudentAuthorizedForUser(student)) {
+      showToast(
+        `[ACCESS DENIED - 403] As ${currentUser?.department} Faculty, you are not authorized to mark attendance for ${student.name} (${student.department}).`,
+        'error',
+        6000
+      );
+      return;
+    }
+
+    setActiveTappedTag(student.rfidTagId);
+    await triggerScan(student.rfidTagId);
     setTimeout(() => {
       setActiveTappedTag(null);
     }, 1200);
@@ -40,14 +69,16 @@ export default function RFIDSimulatorModal({ isOpen, onClose, preselectedTag }) 
               <Radio className="h-5 w-5 animate-pulse" />
             </div>
             <div>
-              <h3 className="text-lg font-extrabold text-[#2A1726] flex items-center space-x-2">
-                <span>Interactive RFID Badge Scanner</span>
+              <div className="flex items-center space-x-2">
+                <h3 className="text-lg font-extrabold text-[#2A1726]">Interactive RFID Badge Scanner</h3>
                 <span className="px-2.5 py-0.5 rounded text-[10px] font-mono bg-[#D1B8CC] text-[#2A1726] border border-[#BA87AD] font-bold shadow-2xs">
-                  RC522 / PN532 Emulator
+                  {isHOD ? 'HOD Global Scope' : `${currentUser?.department} Only`}
                 </span>
-              </h3>
+              </div>
               <p className="text-xs text-[#5F4257] font-semibold">
-                Click any student keycard or enter a custom tag to broadcast an RFID tap event
+                {isHOD
+                  ? 'Dr. Raman (HOD) is authorized to tap & mark attendance for any student across all branches.'
+                  : `Signed in as ${currentUser?.name}. You can only scan badges for ${currentUser?.department} students.`}
               </p>
             </div>
           </div>
@@ -63,6 +94,25 @@ export default function RFIDSimulatorModal({ isOpen, onClose, preselectedTag }) 
         {/* Modal Content */}
         <div className="p-6 overflow-y-auto space-y-6">
           
+          {/* Faculty Scope Alert Banner */}
+          <div className={`p-3.5 rounded-xl border flex items-center justify-between text-xs font-bold ${
+            isHOD
+              ? 'bg-amber-50 border-amber-300 text-amber-950'
+              : 'bg-[#F3E6F0] border-[#D1B8CC] text-[#4A1E3F]'
+          }`}>
+            <div className="flex items-center space-x-2">
+              {isHOD ? <ShieldCheck className="h-4 w-4 text-amber-700" /> : <Lock className="h-4 w-4 text-[#6E3B61]" />}
+              <span>
+                {isHOD
+                  ? 'University HOD Authority Active: All student badges are unlocked for scanning.'
+                  : `Department Lock Active: Only ${currentUser?.department} keycards are authorized for tap.`}
+              </span>
+            </div>
+            <span className="text-[11px] underline">
+              {isHOD ? 'Full Access' : 'Department Restricted'}
+            </span>
+          </div>
+
           {/* Manual Tag Entry & Tester */}
           <div className="p-4 rounded-xl bg-[#EDE0EB] border border-[#D1B8CC] flex flex-col sm:flex-row items-center justify-between gap-4 shadow-2xs">
             <div className="text-xs text-[#2A1726] space-y-0.5">
@@ -71,7 +121,7 @@ export default function RFIDSimulatorModal({ isOpen, onClose, preselectedTag }) 
                 <span>Direct Tag Dispatcher</span>
               </div>
               <p className="text-[#5F4257] font-medium">
-                Test custom RFID IDs (e.g. try an unregistered card like <code className="text-rose-700 font-bold bg-white px-1.5 py-0.5 rounded border border-rose-300">UNKNOWN-999</code> to test 404 response)
+                Test custom RFID IDs (e.g. try an unregistered card like <code className="text-rose-700 font-bold bg-white px-1.5 py-0.5 rounded border border-rose-300">UNKNOWN-999</code> or a cross-branch card)
               </p>
             </div>
 
@@ -98,10 +148,10 @@ export default function RFIDSimulatorModal({ isOpen, onClose, preselectedTag }) 
           <div>
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#5F4257]">
-                Registered Student RFID Keycards ({students.length})
+                Student RFID Keycards ({students.length})
               </h4>
               <span className="text-[11px] text-[#5F4257] font-semibold">
-                Click "Scan Card" to tap badge onto reader
+                {isHOD ? 'All cards active' : `Click to tap (${currentUser?.department} only)`}
               </span>
             </div>
 
@@ -109,19 +159,22 @@ export default function RFIDSimulatorModal({ isOpen, onClose, preselectedTag }) 
               {students.map((student) => {
                 const isAlreadyPresent = attendedRolls.has(student.rollNo);
                 const isCurrentlyTapped = activeTappedTag === student.rfidTagId;
+                const isAuthorized = isStudentAuthorizedForUser(student);
 
                 return (
                   <div
                     key={student.id}
                     className={`relative rounded-2xl p-4 border-2 transition-all duration-300 ${
-                      isCurrentlyTapped
+                      !isAuthorized
+                        ? 'opacity-60 border-slate-300 bg-slate-50'
+                        : isCurrentlyTapped
                         ? 'border-[#6E3B61] bg-[#F3E6F0] shadow-xl shadow-[#6E3B61]/25 scale-[1.02]'
                         : isAlreadyPresent
                         ? 'border-emerald-300 bg-emerald-50/50'
                         : 'border-[#D1B8CC] bg-gradient-to-br from-white via-[#FAF5F8] to-[#F3E6F0] hover:border-[#6E3B61] hover:shadow-md shadow-2xs'
                     }`}
                   >
-                    {/* RFID Contactless Graphic */}
+                    {/* RFID Contactless Graphic & Authorization Badge */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
                         <div className="h-6 w-8 rounded rfid-chip border border-[#BA87AD] relative overflow-hidden">
@@ -131,8 +184,13 @@ export default function RFIDSimulatorModal({ isOpen, onClose, preselectedTag }) 
                         <Radio className={`h-4 w-4 ${isCurrentlyTapped ? 'text-[#6E3B61] animate-ping' : 'text-[#8E587F]'}`} />
                       </div>
 
-                      {/* Today's check-in status badge */}
-                      {isAlreadyPresent ? (
+                      {/* Today's check-in status or Locked Badge */}
+                      {!isAuthorized ? (
+                        <span className="flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 text-slate-700 border border-slate-300">
+                          <Lock className="h-3 w-3 text-slate-500" />
+                          <span>Locked</span>
+                        </span>
+                      ) : isAlreadyPresent ? (
                         <span className="flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-950 border border-emerald-300">
                           <CheckCircle2 className="h-3 w-3 text-emerald-700" />
                           <span>Checked In</span>
@@ -160,17 +218,34 @@ export default function RFIDSimulatorModal({ isOpen, onClose, preselectedTag }) 
                       </div>
 
                       <button
-                        onClick={() => handleCardTap(student.rfidTagId)}
+                        onClick={() => handleCardTap(student)}
                         disabled={isScanning}
                         className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                          isAlreadyPresent
+                          !isAuthorized
+                            ? 'bg-slate-200 text-slate-500 border border-slate-300 hover:bg-rose-100 hover:text-rose-700 hover:border-rose-300'
+                            : isAlreadyPresent
                             ? 'bg-amber-100 hover:bg-amber-200 text-amber-950 border border-amber-300 shadow-2xs'
                             : 'btn-mauve-primary active:scale-95'
                         }`}
-                        title={isAlreadyPresent ? 'Will reject with 409 Duplicate' : 'Transmit 13.56MHz RFID tap'}
+                        title={
+                          !isAuthorized
+                            ? `Unauthorized: ${currentUser?.department} faculty cannot mark ${student.department} students`
+                            : isAlreadyPresent
+                            ? 'Will reject with 409 Duplicate'
+                            : 'Transmit 13.56MHz RFID tap'
+                        }
                       >
-                        <Radio className="h-3.5 w-3.5" />
-                        <span>{isAlreadyPresent ? 'Retap (409)' : 'Scan Card'}</span>
+                        {!isAuthorized ? (
+                          <>
+                            <Lock className="h-3 w-3" />
+                            <span>Locked</span>
+                          </>
+                        ) : (
+                          <>
+                            <Radio className="h-3.5 w-3.5" />
+                            <span>{isAlreadyPresent ? 'Retap (409)' : 'Scan Card'}</span>
+                          </>
+                        )}
                       </button>
                     </div>
 
@@ -180,22 +255,22 @@ export default function RFIDSimulatorModal({ isOpen, onClose, preselectedTag }) 
             </div>
           </div>
 
-          {/* Hardware Protocol Information Box */}
+          {/* Department RBAC Notice */}
           <div className="p-4 rounded-xl bg-[#F3E6F0] border border-[#D1B8CC] text-xs text-[#2A1726] flex items-start space-x-3">
             <Sparkles className="h-5 w-5 text-[#6E3B61] shrink-0 mt-0.5" />
             <div>
-              <p className="text-[#2A1726] font-bold">Laboratory Verification Guide:</p>
+              <p className="text-[#2A1726] font-bold">Role-Based Access Enforcement Rules:</p>
               <ul className="list-disc list-inside space-y-1 mt-1 text-[11px] font-medium text-[#5F4257]">
-                <li><strong className="text-[#2A1726]">New Scan:</strong> Tapping an unverified student records attendance with status <code>PRESENT</code> (or <code>LATE</code> after 09:30 AM).</li>
-                <li><strong className="text-[#2A1726]">Duplicate Check:</strong> Tapping the same student twice on the same day is rejected by the backend with HTTP <code>409 Conflict</code>.</li>
-                <li><strong className="text-[#2A1726]">Unregistered Card:</strong> Transmitting an unknown tag (e.g. <code>UNKNOWN-001</code>) returns HTTP <code>404 Not Found</code>.</li>
+                <li><strong className="text-[#2A1726]">ME Faculty:</strong> Authorized to mark Mechanical Engineering students only. Cross-branch scans return HTTP <code>403 Forbidden</code>.</li>
+                <li><strong className="text-[#2A1726]">CE Faculty:</strong> Authorized to mark Computer Engineering students only. Cross-branch scans return HTTP <code>403 Forbidden</code>.</li>
+                <li><strong className="text-[#2A1726]">HOD Login:</strong> Universal authority to mark attendance and inspect live feeds across all branches.</li>
               </ul>
             </div>
           </div>
 
         </div>
 
-        {/* Modal Footer - Solid Mauve Close Button */}
+        {/* Modal Footer */}
         <div className="p-4 border-t border-[#D1B8CC] bg-[#EDE0EB] flex justify-end">
           <button
             onClick={onClose}

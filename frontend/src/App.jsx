@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { AttendanceProvider, useAttendance } from './context/AttendanceContext';
+import LoginPage from './components/LoginPage';
 import Navbar from './components/Navbar';
 import MetricCards from './components/MetricCards';
 import StudentManagement from './components/StudentManagement';
 import AttendanceFeed from './components/AttendanceFeed';
 import RFIDSimulatorModal from './components/RFIDSimulatorModal';
-import { Radio, X, CheckCircle2, AlertTriangle, AlertCircle, Info } from 'lucide-react';
+import { Radio, X, CheckCircle2, AlertTriangle, AlertCircle, Info, ShieldCheck, UserCheck } from 'lucide-react';
 
 function Dashboard() {
-  const { toast, dismissToast } = useAttendance();
+  const { currentUser, toast, dismissToast, selectedBranchFilter } = useAttendance();
   const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
   const [selectedTagForSim, setSelectedTagForSim] = useState('');
   const [activeTab, setActiveTab] = useState('both'); // 'both', 'students', 'feed'
@@ -17,6 +18,8 @@ function Dashboard() {
     setSelectedTagForSim(tag);
     setIsSimulatorOpen(true);
   };
+
+  const isHOD = currentUser?.role === 'HOD';
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F5EFEB] text-[#2A1726]">
@@ -60,17 +63,30 @@ function Dashboard() {
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         
-        {/* Banner with 30%+ Mauve Depth */}
+        {/* Banner with Role Context */}
         <div className="banner-mauve rounded-2xl p-6 relative overflow-hidden">
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="flex items-center space-x-2 text-[#E8D3E3] font-mono text-xs font-bold uppercase tracking-wider mb-1">
-                <Radio className="h-3.5 w-3.5 animate-pulse text-[#E8D3E3]" />
-                <span>Simulation-Ready University IoT Architecture</span>
+                {isHOD ? (
+                  <ShieldCheck className="h-3.5 w-3.5 text-amber-300" />
+                ) : (
+                  <UserCheck className="h-3.5 w-3.5 text-[#E8D3E3]" />
+                )}
+                <span>
+                  {isHOD
+                    ? 'HOD Oversight &bull; Full Cross-Branch Authority'
+                    : `Authorized Faculty Portal &bull; ${currentUser?.department}`}
+                </span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
                 RFID-Based Student Attendance Portal
               </h1>
+              <p className="text-xs text-[#E8D3E3] mt-1 font-semibold">
+                {isHOD
+                  ? `Logged in as Dr. Raman (HOD). Currently viewing: ${selectedBranchFilter === 'ALL' ? 'All Engineering Branches' : selectedBranchFilter}`
+                  : `Logged in as ${currentUser?.name}. Authorized to mark attendance for ${currentUser?.department} students only.`}
+              </p>
             </div>
 
             <div className="flex items-center space-x-3">
@@ -131,7 +147,7 @@ function Dashboard() {
 
       </main>
 
-      {/* Hardware RFID Simulator Modal */}
+      {/* Hardware RFID Simulator Modal with Role-Based Permission Rules */}
       <RFIDSimulatorModal
         isOpen={isSimulatorOpen}
         onClose={() => setIsSimulatorOpen(false)}
@@ -157,10 +173,20 @@ function Dashboard() {
   );
 }
 
+function MainApp() {
+  const { currentUser } = useAttendance();
+
+  if (!currentUser) {
+    return <LoginPage />;
+  }
+
+  return <Dashboard />;
+}
+
 export default function App() {
   return (
     <AttendanceProvider>
-      <Dashboard />
+      <MainApp />
     </AttendanceProvider>
   );
 }
