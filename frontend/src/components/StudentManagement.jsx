@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useAttendance } from '../context/AttendanceContext';
-import { UserPlus, Search, Trash2, IdCard, Check, AlertCircle, Sparkles, X } from 'lucide-react';
+import { UserPlus, Search, Trash2, IdCard, Check, AlertCircle, Sparkles, X, Users } from 'lucide-react';
 
 /**
  * StudentManagement Component
@@ -180,10 +180,20 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
                   </div>
                 </td>
               </tr>
+            ) : students.length === 0 ? (
+              <tr>
+                <td colSpan="5" className="py-12 text-center text-[#5F4257]">
+                  <div className="flex flex-col items-center justify-center space-y-2">
+                    <Users className="h-8 w-8 text-[#8E587F] opacity-60" />
+                    <p className="font-bold text-sm text-[#2A1726]">No students currently enrolled in the database</p>
+                    <p className="text-xs text-[#5F4257]">Click &quot;Add Student&quot; above to register new students with RFID badges.</p>
+                  </div>
+                </td>
+              </tr>
             ) : filteredStudents.length === 0 ? (
               <tr>
                 <td colSpan="5" className="py-8 text-center text-[#5F4257]">
-                  No students found matching your query.
+                  No students found matching &quot;{searchTerm}&quot;.
                 </td>
               </tr>
             ) : (

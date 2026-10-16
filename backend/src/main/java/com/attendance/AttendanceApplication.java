@@ -21,24 +21,14 @@ public class AttendanceApplication {
     }
 
     /**
-     * Seeds initial student dataset with realistic RFID badges
-     * to enable immediate testing across frontend, Postman, and Python emulator.
+     * Initial student seeder - currently disabled to keep database clean.
+     * Can be uncommented if sample demo students are ever required.
      */
     @Bean
     CommandLineRunner seedInitialData(StudentRepository studentRepository) {
         return args -> {
-            if (studentRepository.count() == 0) {
-                List<Student> sampleStudents = List.of(
-                        new Student("Aarav Sharma", "CS2024-001", "TAG-A101", "Computer Science & Engineering"),
-                        new Student("Diya Patel", "CS2024-002", "TAG-B202", "Computer Science & Engineering"),
-                        new Student("Rohan Verma", "IT2024-015", "TAG-C303", "Information Technology"),
-                        new Student("Ananya Iyer", "EC2024-042", "TAG-D404", "Electronics & Comm Engineering"),
-                        new Student("Kabir Mehta", "ME2024-088", "TAG-E505", "Mechanical Engineering"),
-                        new Student("Priya Nair", "ME2024-089", "TAG-E506", "Mechanical Engineering")
-                );
-                studentRepository.saveAll(sampleStudents);
-                System.out.println(">>> [RFID System] Seeded " + sampleStudents.size() + " sample students with active RFID tags.");
-            }
+            // Seeding disabled: Database starts empty
+            System.out.println(">>> [RFID System] Initialized with empty student database.");
         };
     }
 }

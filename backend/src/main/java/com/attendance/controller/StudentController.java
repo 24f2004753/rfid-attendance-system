@@ -2,10 +2,12 @@ package com.attendance.controller;
 
 import com.attendance.model.Student;
 import com.attendance.repository.StudentRepository;
+import com.attendance.repository.AttendanceRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -21,10 +23,12 @@ import java.util.List;
 public class StudentController {
 
     private final StudentRepository studentRepository;
+    private final AttendanceRepository attendanceRepository;
 
     @Autowired
-    public StudentController(StudentRepository studentRepository) {
+    public StudentController(StudentRepository studentRepository, AttendanceRepository attendanceRepository) {
         this.studentRepository = studentRepository;
+        this.attendanceRepository = attendanceRepository;
     }
 
     /**
@@ -93,14 +97,26 @@ public class StudentController {
     }
 
     /**
-     * DELETE /api/students/{id} - Delete a student record
+     * DELETE /api/students/{id} - Delete a student record and their attendance logs
      */
     @DeleteMapping("/{id}")
+    @Transactional
     public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
-        if (!studentRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found with ID: " + id);
-        }
-        studentRepository.deleteById(id);
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found with ID: " + id));
+        attendanceRepository.deleteByStudent(student);
+        studentRepository.delete(student);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * DELETE /api/students - Delete all students and their attendance records
+     */
+    @DeleteMapping
+    @Transactional
+    public ResponseEntity<Void> deleteAllStudents() {
+        attendanceRepository.deleteAll();
+        studentRepository.deleteAll();
         return ResponseEntity.noContent().build();
     }
 }

@@ -144,3 +144,4 @@ public class AuthController {
         return ResponseEntity.ok(List.copyOf(FACULTY_REGISTRY.values()));
     }
 }
+

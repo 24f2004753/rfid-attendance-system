@@ -25,5 +25,7 @@ public interface AttendanceRepository extends JpaRepository<AttendanceRecord, Lo
     long countByTimestampBetween(LocalDateTime start, LocalDateTime end);
 
     long countByStatusAndTimestampBetween(AttendanceStatus status, LocalDateTime start, LocalDateTime end);
+
+    void deleteByStudent(Student student);
 }
 

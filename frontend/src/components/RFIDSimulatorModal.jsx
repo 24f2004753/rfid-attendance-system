@@ -156,12 +156,18 @@ export default function RFIDSimulatorModal({ isOpen, onClose, preselectedTag }) 
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {students.map((student) => {
-                const isAlreadyPresent = attendedRolls.has(student.rollNo);
-                const isCurrentlyTapped = activeTappedTag === student.rfidTagId;
-                const isAuthorized = isStudentAuthorizedForUser(student);
+              {students.length === 0 ? (
+                <div className="col-span-full py-8 px-4 text-center text-[#5F4257] bg-white rounded-xl border border-dashed border-[#D1B8CC]">
+                  <p className="font-bold text-xs text-[#2A1726]">No registered student keycards available</p>
+                  <p className="text-[11px] text-[#5F4257] mt-1">Enroll students in the Student Directory first, or test any RFID tag (like unknown tags) using the Direct Tag Dispatcher above.</p>
+                </div>
+              ) : (
+                students.map((student) => {
+                  const isAlreadyPresent = attendedRolls.has(student.rollNo);
+                  const isCurrentlyTapped = activeTappedTag === student.rfidTagId;
+                  const isAuthorized = isStudentAuthorizedForUser(student);
 
-                return (
+                  return (
                   <div
                     key={student.id}
                     className={`relative rounded-2xl p-4 border-2 transition-all duration-300 ${
@@ -251,7 +257,7 @@ export default function RFIDSimulatorModal({ isOpen, onClose, preselectedTag }) 
 
                   </div>
                 );
-              })}
+              }))}
             </div>
           </div>
 
