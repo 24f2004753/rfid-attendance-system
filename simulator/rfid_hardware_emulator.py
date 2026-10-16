@@ -92,21 +92,29 @@ def check_backend_health(base_url):
         return False
 
 
-def transmit_rfid_tap(tag_id, base_url, student_hint=None):
+def transmit_rfid_tap(tag_id, base_url, student_hint=None, role="HOD", dept="ALL"):
     """
     Transmit an RFID tap event to POST /api/attendance/scan.
-    Handles HTTP 201 (Success), 409 (Duplicate), 404 (Unregistered), and Errors.
+    Handles HTTP 201 (Success), 403 (Department Forbidden), 409 (Duplicate), 404 (Unregistered), and Errors.
     """
     scan_endpoint = f"{base_url}/api/attendance/scan"
-    payload = {"rfidTagId": tag_id.strip()}
+    payload = {
+        "rfidTagId": tag_id.strip(),
+        "facultyRole": role,
+        "facultyDepartment": dept
+    }
+    headers = {
+        "X-Faculty-Role": role,
+        "X-Faculty-Department": dept
+    }
     timestamp_str = datetime.now().strftime("%H:%M:%S")
 
     hint_str = f" ({student_hint})" if student_hint else ""
-    print(f"[{timestamp_str}] [RFID TAP] Transmitting Tag: {Colors.BOLD}{tag_id}{Colors.END}{hint_str} ...", end=" ", flush=True)
+    print(f"[{timestamp_str}] [RFID TAP] Transmitting Tag: {Colors.BOLD}{tag_id}{Colors.END}{hint_str} [Role: {role}] ...", end=" ", flush=True)
 
     try:
         start_time = time.time()
-        res = requests.post(scan_endpoint, json=payload, timeout=5)
+        res = requests.post(scan_endpoint, json=payload, headers=headers, timeout=5)
         elapsed_ms = int((time.time() - start_time) * 1000)
 
         if res.status_code == 201:
@@ -116,6 +124,12 @@ def transmit_rfid_tap(tag_id, base_url, student_hint=None):
             status_color = Colors.GREEN if status == "PRESENT" else Colors.YELLOW
             print(f"{status_color}[SUCCESS 201]{Colors.END} {student.get('name')} ({student.get('rollNo')}) -> Status: {Colors.BOLD}{status}{Colors.END} ({elapsed_ms}ms)")
             return True, "SUCCESS"
+
+        elif res.status_code == 403:
+            data = res.json() if res.content else {}
+            msg = data.get("message", "Access Denied: Faculty not authorized for this branch student")
+            print(f"{Colors.RED}[ACCESS DENIED 403]{Colors.END} {msg} ({elapsed_ms}ms)")
+            return False, "FORBIDDEN"
 
         elif res.status_code == 409:
             data = res.json() if res.content else {}
@@ -292,6 +306,8 @@ def main():
     parser.add_argument("--auto", action="store_true", help="Start automated continuous streaming mode immediately")
     parser.add_argument("--interval", type=int, default=3, help="Interval in seconds for auto streaming (default: 3)")
     parser.add_argument("--tag", type=str, default=None, help="Transmit a single specified RFID Tag ID and exit")
+    parser.add_argument("--role", type=str, default="HOD", help="Faculty role: HOD, FACULTY (default: HOD)")
+    parser.add_argument("--dept", type=str, default="ALL", help="Faculty department: 'Mechanical Engineering', 'Computer Science & Engineering', or 'ALL' (default: ALL)")
 
     args = parser.parse_args()
 
@@ -300,7 +316,7 @@ def main():
 
     # CLI Direct mode 1: single tag
     if args.tag:
-        transmit_rfid_tap(args.tag, args.url)
+        transmit_rfid_tap(args.tag, args.url, role=args.role, dept=args.dept)
         sys.exit(0)
 
     # CLI Direct mode 2: auto streaming flag

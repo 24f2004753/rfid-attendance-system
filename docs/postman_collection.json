@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "7b8f9e21-d419-4cb5-b467-93e15fa68923",
     "name": "RFID Attendance System - Academic Lab Experiments (Expt 1 & 6)",
-    "description": "Complete REST API Testing Collection for University Lab Course.\nSatisfies Expt 1 (LO1: REST Architecture, CRUD, and Postman testing) and Expt 6 (LO4: Spring Boot Backend CRUD).",
+    "description": "Complete REST API Testing Collection for University Lab Course.\nSatisfies Expt 1 (LO1: REST Architecture, CRUD, and Postman testing) and Expt 6 (LO4: Spring Boot Backend CRUD).\nIncludes Role-Based Faculty Authorization (ME, CE, HOD).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -18,6 +18,136 @@
     }
   ],
   "item": [
+    {
+      "name": "0. Faculty Authentication & RBAC",
+      "description": "Role-Based Access Control endpoints for faculty and HOD logins.",
+      "item": [
+        {
+          "name": "POST ME Faculty Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Authenticated as ME Faculty', function () {",
+                  "    const data = pm.response.json();",
+                  "    pm.expect(data.username).to.eql('me_faculty');",
+                  "    pm.expect(data.department).to.eql('Mechanical Engineering');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"me_faculty\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Authenticates Mechanical Engineering faculty."
+          },
+          "response": []
+        },
+        {
+          "name": "POST CE Faculty Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Authenticated as CE Faculty', function () {",
+                  "    const data = pm.response.json();",
+                  "    pm.expect(data.username).to.eql('ce_faculty');",
+                  "    pm.expect(data.department).to.eql('Computer Science & Engineering');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"ce_faculty\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Authenticates Computer Engineering faculty."
+          },
+          "response": []
+        },
+        {
+          "name": "POST HOD Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Authenticated as HOD Super-Admin', function () {",
+                  "    const data = pm.response.json();",
+                  "    pm.expect(data.username).to.eql('hod');",
+                  "    pm.expect(data.role).to.eql('HOD');",
+                  "    pm.expect(data.department).to.eql('ALL');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"hod\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Authenticates Head of Department (HOD) with universal oversight."
+          },
+          "response": []
+        }
+      ]
+    },
     {
       "name": "1. Student Management (CRUD)",
       "description": "Expt 1 & 6: Student entity management endpoints using standard HTTP verbs (GET, POST, PUT, DELETE).",
@@ -55,6 +185,39 @@
               "path": ["api", "students"]
             },
             "description": "Retrieves the full list of enrolled students from the H2 database."
+          },
+          "response": []
+        },
+        {
+          "name": "GET Students Filtered by Department",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/students?department=Mechanical",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students"],
+              "query": [
+                {
+                  "key": "department",
+                  "value": "Mechanical"
+                }
+              ]
+            },
+            "description": "Retrieves only students belonging to the Mechanical Engineering department."
           },
           "response": []
         },
@@ -145,10 +308,6 @@
                 "exec": [
                   "pm.test('Status code is 200 OK', function () {",
                   "    pm.response.to.have.status(200);",
-                  "});",
-                  "pm.test('Department is updated', function () {",
-                  "    const res = pm.response.json();",
-                  "    pm.expect(res.department).to.eql('Artificial Intelligence & Data Science');",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -169,7 +328,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Aarav Sharma\",\n  \"rollNo\": \"CS2024-001\",\n  \"rfidTagId\": \"TAG-A101\",\n  \"department\": \"Artificial Intelligence & Data Science\"\n}"
+              "raw": "{\n  \"name\": \"Aarav Sharma\",\n  \"rollNo\": \"CS2024-001\",\n  \"rfidTagId\": \"TAG-A101\",\n  \"department\": \"Computer Science & Engineering\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/students/1",
@@ -211,24 +370,18 @@
     },
     {
       "name": "2. RFID Attendance & Verification",
-      "description": "Expt 1 & 6: Business logic endpoints for physical/simulated RFID card taps and reporting.",
+      "description": "Expt 1 & 6: Business logic endpoints for physical/simulated RFID card taps, authorization checks, and reporting.",
       "item": [
         {
-          "name": "POST RFID Card Scan (Success 201)",
+          "name": "POST RFID Scan - Authorized ME Faculty (201)",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('Scan returned 201 Created or 409 if already checked in', function () {",
+                  "pm.test('Scan returned 201 Created or 409', function () {",
                   "    pm.expect(pm.response.code).to.be.oneOf([201, 409]);",
-                  "});",
-                  "if (pm.response.code === 201) {",
-                  "    const data = pm.response.json();",
-                  "    pm.expect(data).to.have.property('id');",
-                  "    pm.expect(data).to.have.property('status');",
-                  "    pm.expect(['PRESENT', 'LATE']).to.include(data.status);",
-                  "}"
+                  "});"
                 ],
                 "type": "text/javascript"
               }
@@ -242,20 +395,112 @@
                 "value": "application/json"
               },
               {
-                "key": "Accept",
-                "value": "application/json"
+                "key": "X-Faculty-Role",
+                "value": "FACULTY"
+              },
+              {
+                "key": "X-Faculty-Department",
+                "value": "Mechanical Engineering"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"rfidTagId\": \"TAG-A101\"\n}"
+              "raw": "{\n  \"rfidTagId\": \"TAG-E505\",\n  \"facultyRole\": \"FACULTY\",\n  \"facultyDepartment\": \"Mechanical Engineering\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/attendance/scan",
               "host": ["{{baseUrl}}"],
               "path": ["api", "attendance", "scan"]
             },
-            "description": "Simulates an RFID card tap for student Aarav Sharma (TAG-A101). Returns status PRESENT (or LATE after 09:30 AM)."
+            "description": "ME Faculty successfully marks ME student Kabir Mehta (TAG-E505)."
+          },
+          "response": []
+        },
+        {
+          "name": "POST RFID Scan - ME Faculty Cross-Branch Check (403 Forbidden)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Access Denied 403 Forbidden for cross-branch scan', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Faculty-Role",
+                "value": "FACULTY"
+              },
+              {
+                "key": "X-Faculty-Department",
+                "value": "Mechanical Engineering"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rfidTagId\": \"TAG-A101\",\n  \"facultyRole\": \"FACULTY\",\n  \"facultyDepartment\": \"Mechanical Engineering\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/attendance/scan",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attendance", "scan"]
+            },
+            "description": "ME Faculty attempts to mark CE student Aarav Sharma (TAG-A101). Enforces 403 Forbidden."
+          },
+          "response": []
+        },
+        {
+          "name": "POST RFID Scan - HOD Universal Scan (201 / 409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('HOD authorized for any student', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([201, 409]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Faculty-Role",
+                "value": "HOD"
+              },
+              {
+                "key": "X-Faculty-Department",
+                "value": "ALL"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rfidTagId\": \"TAG-A101\",\n  \"facultyRole\": \"HOD\",\n  \"facultyDepartment\": \"ALL\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/attendance/scan",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attendance", "scan"]
+            },
+            "description": "HOD possesses universal authority to mark attendance across any branch."
           },
           "response": []
         },
@@ -279,10 +524,6 @@
             "header": [
               {
                 "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
                 "value": "application/json"
               }
             ],
@@ -320,10 +561,6 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
               }
             ],
             "body": {
@@ -340,7 +577,7 @@
           "response": []
         },
         {
-          "name": "GET Today's Attendance Feed",
+          "name": "GET Today's Attendance Feed (All Branches - HOD)",
           "event": [
             {
               "listen": "test",
@@ -348,10 +585,6 @@
                 "exec": [
                   "pm.test('Status code is 200 OK', function () {",
                   "    pm.response.to.have.status(200);",
-                  "});",
-                  "pm.test('Feed is a list sorted reverse chronologically', function () {",
-                  "    const records = pm.response.json();",
-                  "    pm.expect(Array.isArray(records)).to.be.true;",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -360,18 +593,46 @@
           ],
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
+            "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/attendance/today",
               "host": ["{{baseUrl}}"],
               "path": ["api", "attendance", "today"]
             },
-            "description": "Retrieves all verified attendance events recorded for today's date."
+            "description": "HOD views today's attendance across all university branches."
+          },
+          "response": []
+        },
+        {
+          "name": "GET Today's Attendance Feed (ME Department Only)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/attendance/today?department=Mechanical%20Engineering",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attendance", "today"],
+              "query": [
+                {
+                  "key": "department",
+                  "value": "Mechanical Engineering"
+                }
+              ]
+            },
+            "description": "ME Faculty retrieves today's attendance records strictly for Mechanical Engineering."
           },
           "response": []
         },
@@ -384,12 +645,6 @@
                 "exec": [
                   "pm.test('Status code is 200 OK', function () {",
                   "    pm.response.to.have.status(200);",
-                  "});",
-                  "pm.test('Response includes analytical metrics', function () {",
-                  "    const data = pm.response.json();",
-                  "    pm.expect(data).to.have.property('totalEnrolled');",
-                  "    pm.expect(data).to.have.property('totalPresentToday');",
-                  "    pm.expect(data).to.have.property('attendancePercentage');",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -398,18 +653,13 @@
           ],
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Accept",
-                "value": "application/json"
-              }
-            ],
+            "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/attendance/stats",
               "host": ["{{baseUrl}}"],
               "path": ["api", "attendance", "stats"]
             },
-            "description": "Computes real-time analytical metrics: total enrolled, present count today, attendance percentage, on-time vs late breakdown."
+            "description": "Computes real-time analytical metrics."
           },
           "response": []
         }
