@@ -17,3 +17,4 @@ if exist "C:\Users\Archi\apache-maven-3.9.9\bin\mvn.cmd" (
 
 echo [ERROR] Maven not found. Please install Apache Maven or ensure it is in your PATH.
 exit /b 1
+

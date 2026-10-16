@@ -5,3 +5,4 @@ else
     echo "[ERROR] Maven not found in PATH." >&2
     exit 1
 fi
+
