@@ -4,7 +4,7 @@ import { History, CheckCircle2, ClockAlert, Activity } from 'lucide-react';
 
 /**
  * AttendanceFeed Component
- * Styled in Cream, Mauve (~30%), and White.
+ * Styled in Cream (#F5EFEB), Mauve (#6E3B61), and Crisp White.
  */
 export default function AttendanceFeed({ onOpenSimulator }) {
   const { logs, loading } = useAttendance();
@@ -46,52 +46,46 @@ export default function AttendanceFeed({ onOpenSimulator }) {
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-cream-300 shadow-sm">
+    <div className="bg-white rounded-2xl p-6 border border-[#D6BED1] shadow-sm">
       
       {/* Header and Filter Controls */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
           <div className="flex items-center space-x-2">
-            <Activity className="h-5 w-5 text-mauve-700 animate-pulse" />
-            <h2 className="text-xl font-bold text-mauve-950 tracking-tight">Today's Live Attendance Feed</h2>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-mauve-100 text-mauve-900 border border-mauve-300 font-mono font-bold shadow-2xs">
+            <Activity className="h-5 w-5 text-[#6E3B61] animate-pulse" />
+            <h2 className="text-xl font-extrabold text-[#2A1726] tracking-tight">Today's Live Attendance Feed</h2>
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#F3E6F0] text-[#4A1E3F] border border-[#D1B8CC] font-mono font-bold shadow-2xs">
               {logs.length} Scans Today
             </span>
           </div>
-          <p className="text-xs text-mauve-700 mt-0.5 font-medium">
+          <p className="text-xs text-[#5F4257] mt-0.5 font-medium">
             Real-time verification log updated automatically via 13.56MHz RFID scans
           </p>
         </div>
 
         {/* Filter Pills - Mauve container with solid non-white pill buttons */}
         <div className="flex items-center space-x-2">
-          <div className="flex bg-mauve-100 p-1.5 rounded-xl border border-mauve-200 shadow-2xs text-xs">
+          <div className="flex bg-[#EDE0EB] p-1.5 rounded-xl border border-[#D1B8CC] shadow-2xs text-xs">
             <button
               onClick={() => setStatusFilter('ALL')}
-              className={`px-3.5 py-1.5 rounded-lg transition-all font-semibold ${
-                statusFilter === 'ALL'
-                  ? 'bg-mauve-700 text-white shadow-sm'
-                  : 'text-mauve-800 hover:bg-mauve-200/70'
+              className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
+                statusFilter === 'ALL' ? 'tab-btn-active' : 'tab-btn-inactive'
               }`}
             >
               All ({logs.length})
             </button>
             <button
               onClick={() => setStatusFilter('PRESENT')}
-              className={`px-3.5 py-1.5 rounded-lg transition-all font-semibold ${
-                statusFilter === 'PRESENT'
-                  ? 'bg-mauve-700 text-white shadow-sm'
-                  : 'text-mauve-800 hover:bg-mauve-200/70'
+              className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
+                statusFilter === 'PRESENT' ? 'tab-btn-active' : 'tab-btn-inactive'
               }`}
             >
               On-Time ({logs.filter((l) => l.status === 'PRESENT').length})
             </button>
             <button
               onClick={() => setStatusFilter('LATE')}
-              className={`px-3.5 py-1.5 rounded-lg transition-all font-semibold ${
-                statusFilter === 'LATE'
-                  ? 'bg-mauve-700 text-white shadow-sm'
-                  : 'text-mauve-800 hover:bg-mauve-200/70'
+              className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
+                statusFilter === 'LATE' ? 'tab-btn-active' : 'tab-btn-inactive'
               }`}
             >
               Late ({logs.filter((l) => l.status === 'LATE').length})
@@ -101,40 +95,40 @@ export default function AttendanceFeed({ onOpenSimulator }) {
       </div>
 
       {/* Attendance Records Table */}
-      <div className="overflow-x-auto rounded-xl border border-mauve-200 bg-white shadow-2xs">
-        <table className="w-full text-left text-xs text-mauve-950">
-          <thead className="bg-mauve-100/90 text-[11px] uppercase tracking-wider text-mauve-950 font-bold border-b border-mauve-200">
+      <div className="overflow-x-auto rounded-xl border border-[#D6BED1] bg-white shadow-2xs">
+        <table className="w-full text-left text-xs text-[#2A1726]">
+          <thead className="table-header-mauve text-[11px] uppercase tracking-wider">
             <tr>
-              <th className="py-3 px-4">Verification Time</th>
-              <th className="py-3 px-4">Student Name</th>
-              <th className="py-3 px-4">Roll Number</th>
-              <th className="py-3 px-4">Department</th>
-              <th className="py-3 px-4 text-center">Status</th>
+              <th className="py-3.5 px-4">Verification Time</th>
+              <th className="py-3.5 px-4">Student Name</th>
+              <th className="py-3.5 px-4">Roll Number</th>
+              <th className="py-3.5 px-4">Department</th>
+              <th className="py-3.5 px-4 text-center">Status</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-cream-200 font-medium">
+          <tbody className="divide-y divide-[#EAE2D8] font-medium">
             {loading && logs.length === 0 ? (
               <tr>
-                <td colSpan="5" className="py-12 text-center text-mauve-600">
+                <td colSpan="5" className="py-12 text-center text-[#5F4257]">
                   <div className="flex items-center justify-center space-x-2">
-                    <div className="h-4 w-4 border-2 border-mauve-700 border-t-transparent rounded-full animate-spin"></div>
+                    <div className="h-4 w-4 border-2 border-[#6E3B61] border-t-transparent rounded-full animate-spin"></div>
                     <span>Checking live session records...</span>
                   </div>
                 </td>
               </tr>
             ) : filteredLogs.length === 0 ? (
               <tr>
-                <td colSpan="5" className="py-12 text-center text-mauve-600">
+                <td colSpan="5" className="py-12 text-center text-[#5F4257]">
                   <div className="max-w-sm mx-auto text-center space-y-2">
-                    <History className="h-8 w-8 text-mauve-400 mx-auto" />
-                    <p className="text-mauve-950 font-bold text-sm">No Check-Ins Found Today</p>
-                    <p className="text-xs text-mauve-700">
+                    <History className="h-8 w-8 text-[#8E587F] mx-auto" />
+                    <p className="text-[#2A1726] font-bold text-sm">No Check-Ins Found Today</p>
+                    <p className="text-xs text-[#5F4257]">
                       Simulate a hardware card tap or run the Python simulator to register immediate attendance.
                     </p>
                     {/* Non-white button */}
                     <button
                       onClick={onOpenSimulator}
-                      className="mt-3 px-5 py-2.5 rounded-xl text-xs font-bold bg-mauve-700 hover:bg-mauve-800 text-white shadow-md shadow-mauve-700/25 transition-all inline-block active:scale-95"
+                      className="mt-3 px-5 py-2.5 rounded-xl text-xs btn-mauve-primary transition-all inline-block cursor-pointer active:scale-95"
                     >
                       Tap Student Badge
                     </button>
@@ -150,20 +144,20 @@ export default function AttendanceFeed({ onOpenSimulator }) {
                   <tr
                     key={record.id}
                     className={`transition-colors ${
-                      isMostRecent ? 'bg-mauve-100/40 hover:bg-mauve-100/60' : 'hover:bg-cream-50/80'
+                      isMostRecent ? 'bg-[#F3E6F0]/60 hover:bg-[#F3E6F0]/80' : 'hover:bg-[#FAF2F7]'
                     }`}
                   >
                     {/* Timestamp */}
                     <td className="py-3 px-4">
                       <div className="flex items-center space-x-2">
-                        <span className="font-mono text-mauve-950 font-bold">
+                        <span className="font-mono text-[#2A1726] font-bold">
                           {formatTime(record.timestamp)}
                         </span>
-                        <span className="text-[10px] text-mauve-600 font-mono">
+                        <span className="text-[10px] text-[#5F4257] font-mono">
                           {formatDate(record.timestamp)}
                         </span>
                         {isMostRecent && (
-                          <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-mauve-200 text-mauve-900 border border-mauve-300 uppercase shadow-2xs">
+                          <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-[#D1B8CC] text-[#2A1726] border border-[#8E587F]/30 uppercase shadow-2xs">
                             Latest
                           </span>
                         )}
@@ -173,31 +167,31 @@ export default function AttendanceFeed({ onOpenSimulator }) {
                     {/* Student Info */}
                     <td className="py-3 px-4">
                       <div className="flex items-center space-x-3">
-                        <div className="h-7 w-7 rounded-full bg-mauve-100 text-mauve-900 font-bold flex items-center justify-center text-xs border border-mauve-300 shadow-2xs">
+                        <div className="h-7 w-7 rounded-full bg-[#6E3B61] text-white font-bold flex items-center justify-center text-xs shadow-2xs">
                           {record.student?.name?.charAt(0) || 'S'}
                         </div>
-                        <span className="font-bold text-mauve-950">
+                        <span className="font-bold text-[#2A1726]">
                           {record.student?.name || 'Unknown Student'}
                         </span>
                       </div>
                     </td>
 
                     {/* Roll No */}
-                    <td className="py-3 px-4 font-mono font-medium text-mauve-900">
+                    <td className="py-3 px-4 font-mono font-bold text-[#2A1726]">
                       {record.student?.rollNo || '—'}
                     </td>
 
                     {/* Department */}
-                    <td className="py-3 px-4 text-mauve-800 font-medium">
+                    <td className="py-3 px-4 text-[#5F4257] font-medium">
                       {record.student?.department || '—'}
                     </td>
 
                     {/* Status Badge */}
                     <td className="py-3 px-4 text-center">
                       <span
-                        className={`inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
+                        className={`inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold ${
                           isPresent
-                            ? 'bg-emerald-100 text-emerald-900 border border-emerald-300'
+                            ? 'bg-emerald-100 text-emerald-950 border border-emerald-300'
                             : 'bg-amber-100 text-amber-950 border border-amber-300'
                         }`}
                       >

@@ -3,35 +3,121 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --bg-cream: #F5EFEB;
+    --bg-card: #FFFFFF;
+    --mauve-deep: #4A1E3F;
+    --mauve-primary: #6E3B61;
+    --mauve-hover: #542548;
+    --mauve-medium: #8E587F;
+    --mauve-border: #D1B8CC;
+    --mauve-tint: #F3E6F0;
+    --mauve-subtle: #FAF2F7;
+    --text-primary: #2A1726;
+    --text-muted: #5F4257;
+  }
+
   body {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-    background-color: #FAF8F5;
-    color: #2D252E;
+    background-color: #F5EFEB !important;
+    color: #2A1726 !important;
   }
+
   code, pre, .font-mono {
     font-family: 'JetBrains Mono', monospace;
   }
 }
 
-/* Elegant Cream & Mauve Surfaces */
-.glass-panel {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid #EAE2D8;
-  box-shadow: 0 4px 24px -2px rgba(104, 59, 91, 0.06);
+/* Explicit, foolproof Cream & Mauve utility classes */
+.app-bg {
+  background-color: #F5EFEB !important;
 }
 
-.glass-card {
-  background: linear-gradient(135deg, #FFFFFF 0%, #FAF5F8 100%);
-  border: 1px solid #E6D0E0;
-  box-shadow: 0 4px 16px -2px rgba(104, 59, 91, 0.05);
+.app-card {
+  background-color: #FFFFFF !important;
+  border: 1px solid #D6BED1 !important;
+  box-shadow: 0 4px 16px -2px rgba(90, 39, 78, 0.08);
 }
 
-/* RFID card chip styling */
+.banner-mauve {
+  background: linear-gradient(135deg, #4A1E3F 0%, #6E3B61 50%, #4A1E3F 100%) !important;
+  color: #FFFFFF !important;
+  border: 1px solid #542548 !important;
+  box-shadow: 0 8px 24px -4px rgba(74, 30, 63, 0.3) !important;
+}
+
+/* Mauve Primary Button (High contrast, solid mauve background with white text) */
+.btn-mauve-primary {
+  background-color: #6E3B61 !important;
+  color: #FFFFFF !important;
+  border: 1px solid #542548 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 12px rgba(110, 59, 97, 0.25) !important;
+  transition: all 0.2s ease !important;
+}
+.btn-mauve-primary:hover {
+  background-color: #542548 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 6px 16px rgba(110, 59, 97, 0.35) !important;
+}
+
+/* Mauve Secondary / Tinted Button */
+.btn-mauve-tint {
+  background-color: #F3E6F0 !important;
+  color: #4A1E3F !important;
+  border: 1px solid #D1B8CC !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease !important;
+}
+.btn-mauve-tint:hover {
+  background-color: #E8D3E3 !important;
+  color: #2A1726 !important;
+  border-color: #BA87AD !important;
+}
+
+/* Active Tab Button */
+.tab-btn-active {
+  background-color: #6E3B61 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 2px 6px rgba(110, 59, 97, 0.25) !important;
+  font-weight: 700 !important;
+}
+
+/* Inactive Tab Button */
+.tab-btn-inactive {
+  background-color: transparent !important;
+  color: #5F4257 !important;
+  font-weight: 600 !important;
+}
+.tab-btn-inactive:hover {
+  background-color: #E8D3E3 !important;
+  color: #2A1726 !important;
+}
+
+/* Mauve Table Header */
+.table-header-mauve {
+  background-color: #EDE0EB !important;
+  color: #3A1431 !important;
+  border-bottom: 2px solid #D1B8CC !important;
+  font-weight: 700 !important;
+}
+
+/* RFID Pill Badge */
+.rfid-tag-pill {
+  background-color: #F3E6F0 !important;
+  color: #4A1E3F !important;
+  border: 1px solid #C49BBF !important;
+  font-weight: 700 !important;
+}
+.rfid-tag-pill:hover {
+  background-color: #E8D3E3 !important;
+  border-color: #8E587F !important;
+}
+
+/* RFID chip styling */
 .rfid-chip {
-  background: linear-gradient(135deg, #D4AFC9 0%, #F3E8F0 50%, #BA87AD 100%);
-  box-shadow: inset 0 0 4px rgba(104, 59, 91, 0.3);
+  background: linear-gradient(135deg, #BA87AD 0%, #F3E8F0 50%, #8E587F 100%) !important;
+  box-shadow: inset 0 0 4px rgba(74, 30, 63, 0.4);
 }
 
 /* Custom sleek scrollbar with mauve accents */
@@ -40,12 +126,12 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #FAF8F5;
+  background: #F5EFEB;
 }
 ::-webkit-scrollbar-thumb {
-  background: #D4AFC9;
+  background: #BA87AD;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #BA87AD;
+  background: #6E3B61;
 }

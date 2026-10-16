@@ -4,18 +4,14 @@ import { UserPlus, Search, Trash2, IdCard, Check, AlertCircle, Sparkles, X } fro
 
 /**
  * StudentManagement Component
- * Styled in Cream, Mauve (~30%), and White.
+ * Styled in Cream (#F5EFEB), Mauve (#6E3B61), and Crisp White.
  */
 export default function StudentManagement({ onSelectCardForSimulation }) {
   const { students, addStudent, deleteStudent, loading } = useAttendance();
 
-  // Search filter state
   const [searchTerm, setSearchTerm] = useState('');
-  
-  // Modal visibility for Add Student Form
   const [showAddModal, setShowAddModal] = useState(false);
 
-  // Form input state
   const [formData, setFormData] = useState({
     name: '',
     rollNo: '',
@@ -23,7 +19,6 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
     department: 'Computer Science & Engineering',
   });
 
-  // Touched state
   const [touched, setTouched] = useState({
     name: false,
     rollNo: false,
@@ -31,7 +26,6 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
     department: false,
   });
 
-  // Real-time Form Validation
   const validationErrors = useMemo(() => {
     const errors = {};
 
@@ -124,18 +118,18 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
   }, [students, searchTerm]);
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-cream-300 shadow-sm">
+    <div className="bg-white rounded-2xl p-6 border border-[#D6BED1] shadow-sm">
       
       {/* Header & Action Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
           <div className="flex items-center space-x-2">
-            <h2 className="text-xl font-bold text-mauve-950 tracking-tight">Student Directory</h2>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-mauve-100 text-mauve-900 border border-mauve-300 font-mono font-bold shadow-2xs">
+            <h2 className="text-xl font-extrabold text-[#2A1726] tracking-tight">Student Directory</h2>
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#F3E6F0] text-[#4A1E3F] border border-[#D1B8CC] font-mono font-bold shadow-2xs">
               {filteredStudents.length} / {students.length} Enrolled
             </span>
           </div>
-          <p className="text-xs text-mauve-700 mt-0.5 font-medium">
+          <p className="text-xs text-[#5F4257] mt-0.5 font-medium">
             Manage enrolled students, assign hardware RFID badges, and verify identities
           </p>
         </div>
@@ -143,20 +137,20 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
         <div className="flex items-center space-x-3">
           {/* Search Bar */}
           <div className="relative">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-mauve-500" />
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-[#8E587F]" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search name, roll no, tag..."
-              className="pl-9 pr-4 py-2 w-52 sm:w-64 text-xs bg-cream-50 border border-mauve-200 rounded-xl text-mauve-950 placeholder-mauve-400 focus:outline-none focus:border-mauve-600 focus:ring-1 focus:ring-mauve-600 transition-all shadow-2xs"
+              className="pl-9 pr-4 py-2 w-52 sm:w-64 text-xs bg-[#FAF5F8] border border-[#D1B8CC] rounded-xl text-[#2A1726] placeholder-[#8E587F] focus:outline-none focus:border-[#6E3B61] focus:ring-1 focus:ring-[#6E3B61] transition-all shadow-2xs font-medium"
             />
           </div>
 
-          {/* Add Student Button */}
+          {/* Add Student Button (Explicit Solid Mauve Button) */}
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold bg-mauve-700 hover:bg-mauve-800 text-white transition-all shadow-md shadow-mauve-800/25 active:scale-95"
+            className="flex items-center space-x-2 px-4 py-2 rounded-xl text-xs btn-mauve-primary cursor-pointer active:scale-95"
           >
             <UserPlus className="h-4 w-4" />
             <span>Add Student</span>
@@ -165,75 +159,75 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
       </div>
 
       {/* Students Table */}
-      <div className="overflow-x-auto rounded-xl border border-mauve-200 bg-white shadow-2xs">
-        <table className="w-full text-left text-xs text-mauve-950">
-          <thead className="bg-mauve-100/90 text-[11px] uppercase tracking-wider text-mauve-950 font-bold border-b border-mauve-200">
+      <div className="overflow-x-auto rounded-xl border border-[#D6BED1] bg-white shadow-2xs">
+        <table className="w-full text-left text-xs text-[#2A1726]">
+          <thead className="table-header-mauve text-[11px] uppercase tracking-wider">
             <tr>
-              <th className="py-3 px-4">Student</th>
-              <th className="py-3 px-4">Roll Number</th>
-              <th className="py-3 px-4">Department</th>
-              <th className="py-3 px-4">RFID Tag ID</th>
-              <th className="py-3 px-4 text-right">Actions</th>
+              <th className="py-3.5 px-4">Student</th>
+              <th className="py-3.5 px-4">Roll Number</th>
+              <th className="py-3.5 px-4">Department</th>
+              <th className="py-3.5 px-4">RFID Tag ID</th>
+              <th className="py-3.5 px-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-cream-200 font-medium">
+          <tbody className="divide-y divide-[#EAE2D8] font-medium">
             {loading ? (
               <tr>
-                <td colSpan="5" className="py-8 text-center text-mauve-600">
+                <td colSpan="5" className="py-8 text-center text-[#5F4257]">
                   <div className="flex items-center justify-center space-x-2">
-                    <div className="h-4 w-4 border-2 border-mauve-700 border-t-transparent rounded-full animate-spin"></div>
+                    <div className="h-4 w-4 border-2 border-[#6E3B61] border-t-transparent rounded-full animate-spin"></div>
                     <span>Loading student registry from backend...</span>
                   </div>
                 </td>
               </tr>
             ) : filteredStudents.length === 0 ? (
               <tr>
-                <td colSpan="5" className="py-8 text-center text-mauve-600">
+                <td colSpan="5" className="py-8 text-center text-[#5F4257]">
                   No students found matching your query.
                 </td>
               </tr>
             ) : (
               filteredStudents.map((student) => (
-                <tr key={student.id} className="hover:bg-mauve-50/50 transition-colors">
+                <tr key={student.id} className="hover:bg-[#FAF2F7] transition-colors">
                   
                   {/* Name + Avatar */}
                   <td className="py-3 px-4">
                     <div className="flex items-center space-x-3">
-                      <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-mauve-700 to-mauve-900 text-white font-bold flex items-center justify-center text-xs shadow-sm">
+                      <div className="h-8 w-8 rounded-full bg-[#6E3B61] text-white font-extrabold flex items-center justify-center text-xs shadow-sm">
                         {student.name.charAt(0)}
                       </div>
                       <div>
-                        <div className="font-bold text-mauve-950">{student.name}</div>
-                        <div className="text-[10px] text-mauve-600 font-mono">ID: #{student.id}</div>
+                        <div className="font-bold text-[#2A1726]">{student.name}</div>
+                        <div className="text-[10px] text-[#5F4257] font-mono">ID: #{student.id}</div>
                       </div>
                     </div>
                   </td>
 
                   {/* Roll Number */}
-                  <td className="py-3 px-4 font-mono font-semibold text-mauve-950">
-                    <span className="px-2.5 py-1 rounded-md bg-cream-100 border border-mauve-200">
+                  <td className="py-3 px-4 font-mono font-bold text-[#2A1726]">
+                    <span className="px-2.5 py-1 rounded-md bg-[#F5EFEB] border border-[#D6BED1]">
                       {student.rollNo}
                     </span>
                   </td>
 
                   {/* Department */}
-                  <td className="py-3 px-4 text-mauve-800">
+                  <td className="py-3 px-4 text-[#5F4257] font-medium">
                     {student.department}
                   </td>
 
-                  {/* RFID Tag Badge (Mauve Pill - Not White) */}
+                  {/* RFID Tag Badge (Pill button) */}
                   <td className="py-3 px-4">
                     <button
                       onClick={() => onSelectCardForSimulation && onSelectCardForSimulation(student.rfidTagId)}
-                      className="group flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-mauve-100 hover:bg-mauve-200 border border-mauve-300 text-mauve-900 font-mono font-bold transition-all shadow-2xs"
+                      className="group flex items-center space-x-1.5 px-3 py-1.5 rounded-lg rfid-tag-pill transition-all cursor-pointer shadow-2xs"
                       title="Click to simulate tap in Badge Scanner"
                     >
-                      <IdCard className="h-3.5 w-3.5 text-mauve-700 group-hover:scale-110 transition-transform" />
+                      <IdCard className="h-3.5 w-3.5 text-[#6E3B61] group-hover:scale-110 transition-transform" />
                       <span>{student.rfidTagId}</span>
                     </button>
                   </td>
 
-                  {/* Actions (Delete - Mauve tinted, not white) */}
+                  {/* Actions (Delete button) */}
                   <td className="py-3 px-4 text-right">
                     <button
                       onClick={() => {
@@ -241,7 +235,7 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
                           deleteStudent(student.id, student.name);
                         }
                       }}
-                      className="p-1.5 rounded-lg bg-cream-100 hover:bg-rose-100 border border-cream-300 hover:border-rose-300 text-mauve-600 hover:text-rose-700 transition-colors shadow-2xs"
+                      className="p-1.5 rounded-lg btn-mauve-tint hover:bg-rose-100 hover:text-rose-700 transition-colors shadow-2xs cursor-pointer"
                       title="Delete Student"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -257,17 +251,17 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
 
       {/* Add Student Form Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-mauve-950/50 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="w-full max-w-lg bg-white rounded-2xl border border-mauve-300 shadow-2xl overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-lg bg-white rounded-2xl border border-[#D1B8CC] shadow-2xl overflow-hidden">
             
-            <div className="flex items-center justify-between p-6 border-b border-mauve-200 bg-mauve-100/70">
+            <div className="flex items-center justify-between p-6 border-b border-[#D1B8CC] bg-[#EDE0EB]">
               <div>
-                <h3 className="text-lg font-bold text-mauve-950">Enroll New Student</h3>
-                <p className="text-xs text-mauve-700 font-medium">Controlled inputs with real-time validation</p>
+                <h3 className="text-lg font-extrabold text-[#2A1726]">Enroll New Student</h3>
+                <p className="text-xs text-[#5F4257] font-semibold">Controlled inputs with real-time validation</p>
               </div>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="text-mauve-700 hover:text-mauve-950 p-1.5 rounded-lg bg-mauve-200/60 hover:bg-mauve-200 border border-mauve-300 transition-colors shadow-2xs"
+                className="text-[#4A1E3F] hover:text-[#2A1726] p-1.5 rounded-lg btn-mauve-tint transition-colors shadow-2xs cursor-pointer"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -277,7 +271,7 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
               
               {/* Full Name */}
               <div>
-                <label className="block text-xs font-bold text-mauve-900 mb-1">
+                <label className="block text-xs font-bold text-[#2A1726] mb-1">
                   Full Student Name <span className="text-rose-600">*</span>
                 </label>
                 <div className="relative">
@@ -288,13 +282,13 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
                     onChange={handleChange}
                     onBlur={() => handleBlur('name')}
                     placeholder="e.g. Maya Sharma"
-                    className={`w-full px-3.5 py-2.5 rounded-xl text-xs bg-cream-50 border ${
+                    className={`w-full px-3.5 py-2.5 rounded-xl text-xs bg-[#FAF5F8] border ${
                       touched.name && validationErrors.name
                         ? 'border-rose-400 focus:ring-rose-400'
                         : touched.name && !validationErrors.name
                         ? 'border-emerald-400 focus:ring-emerald-400'
-                        : 'border-mauve-300 focus:border-mauve-600'
-                    } text-mauve-950 placeholder-mauve-400 focus:outline-none focus:ring-1 transition-all`}
+                        : 'border-[#D1B8CC] focus:border-[#6E3B61]'
+                    } text-[#2A1726] placeholder-[#8E587F] focus:outline-none focus:ring-1 transition-all font-medium`}
                   />
                   {touched.name && (
                     <div className="absolute right-3 top-2.5">
@@ -307,7 +301,7 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
                   )}
                 </div>
                 {touched.name && validationErrors.name && (
-                  <p className="mt-1 text-[11px] text-rose-600 font-medium">
+                  <p className="mt-1 text-[11px] text-rose-600 font-bold">
                     {validationErrors.name}
                   </p>
                 )}
@@ -315,7 +309,7 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
 
               {/* Roll Number */}
               <div>
-                <label className="block text-xs font-bold text-mauve-900 mb-1">
+                <label className="block text-xs font-bold text-[#2A1726] mb-1">
                   Roll Number <span className="text-rose-600">*</span>
                 </label>
                 <div className="relative">
@@ -326,13 +320,13 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
                     onChange={handleChange}
                     onBlur={() => handleBlur('rollNo')}
                     placeholder="e.g. CS2024-055"
-                    className={`w-full px-3.5 py-2.5 font-mono uppercase rounded-xl text-xs bg-cream-50 border ${
+                    className={`w-full px-3.5 py-2.5 font-mono uppercase rounded-xl text-xs bg-[#FAF5F8] border ${
                       touched.rollNo && validationErrors.rollNo
                         ? 'border-rose-400 focus:ring-rose-400'
                         : touched.rollNo && !validationErrors.rollNo
                         ? 'border-emerald-400 focus:ring-emerald-400'
-                        : 'border-mauve-300 focus:border-mauve-600'
-                    } text-mauve-950 placeholder-mauve-400 focus:outline-none focus:ring-1 transition-all`}
+                        : 'border-[#D1B8CC] focus:border-[#6E3B61]'
+                    } text-[#2A1726] placeholder-[#8E587F] focus:outline-none focus:ring-1 transition-all font-bold`}
                   />
                   {touched.rollNo && (
                     <div className="absolute right-3 top-2.5">
@@ -345,7 +339,7 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
                   )}
                 </div>
                 {touched.rollNo && validationErrors.rollNo && (
-                  <p className="mt-1 text-[11px] text-rose-600 font-medium">
+                  <p className="mt-1 text-[11px] text-rose-600 font-bold">
                     {validationErrors.rollNo}
                   </p>
                 )}
@@ -354,15 +348,15 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
               {/* RFID Tag ID */}
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-bold text-mauve-900">
+                  <label className="text-xs font-bold text-[#2A1726]">
                     Hardware RFID Tag ID <span className="text-rose-600">*</span>
                   </label>
                   <button
                     type="button"
                     onClick={handleAutoGenerateTag}
-                    className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-mauve-100 hover:bg-mauve-200 border border-mauve-300 text-[11px] text-mauve-900 font-semibold transition-colors shadow-2xs"
+                    className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg btn-mauve-tint text-[11px] font-bold cursor-pointer"
                   >
-                    <Sparkles className="h-3 w-3 text-mauve-700" />
+                    <Sparkles className="h-3 w-3 text-[#6E3B61]" />
                     <span>Auto-Generate Hex</span>
                   </button>
                 </div>
@@ -374,13 +368,13 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
                     onChange={handleChange}
                     onBlur={() => handleBlur('rfidTagId')}
                     placeholder="e.g. TAG-F606"
-                    className={`w-full px-3.5 py-2.5 font-mono uppercase rounded-xl text-xs bg-cream-50 border ${
+                    className={`w-full px-3.5 py-2.5 font-mono uppercase rounded-xl text-xs bg-[#FAF5F8] border ${
                       touched.rfidTagId && validationErrors.rfidTagId
                         ? 'border-rose-400 focus:ring-rose-400'
                         : touched.rfidTagId && !validationErrors.rfidTagId
                         ? 'border-emerald-400 focus:ring-emerald-400'
-                        : 'border-mauve-300 focus:border-mauve-600'
-                    } text-mauve-950 placeholder-mauve-400 focus:outline-none focus:ring-1 transition-all`}
+                        : 'border-[#D1B8CC] focus:border-[#6E3B61]'
+                    } text-[#2A1726] placeholder-[#8E587F] focus:outline-none focus:ring-1 transition-all font-bold`}
                   />
                   {touched.rfidTagId && (
                     <div className="absolute right-3 top-2.5">
@@ -393,7 +387,7 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
                   )}
                 </div>
                 {touched.rfidTagId && validationErrors.rfidTagId && (
-                  <p className="mt-1 text-[11px] text-rose-600 font-medium">
+                  <p className="mt-1 text-[11px] text-rose-600 font-bold">
                     {validationErrors.rfidTagId}
                   </p>
                 )}
@@ -401,14 +395,14 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
 
               {/* Department */}
               <div>
-                <label className="block text-xs font-bold text-mauve-900 mb-1">
+                <label className="block text-xs font-bold text-[#2A1726] mb-1">
                   Department <span className="text-rose-600">*</span>
                 </label>
                 <select
                   name="department"
                   value={formData.department}
                   onChange={handleChange}
-                  className="w-full px-3.5 py-2.5 rounded-xl text-xs bg-cream-50 border border-mauve-300 text-mauve-950 focus:outline-none focus:border-mauve-600 transition-all font-medium"
+                  className="w-full px-3.5 py-2.5 rounded-xl text-xs bg-[#FAF5F8] border border-[#D1B8CC] text-[#2A1726] focus:outline-none focus:border-[#6E3B61] transition-all font-semibold"
                 >
                   <option value="Computer Science & Engineering">Computer Science & Engineering</option>
                   <option value="Information Technology">Information Technology</option>
@@ -419,22 +413,22 @@ export default function StudentManagement({ onSelectCardForSimulation }) {
                 </select>
               </div>
 
-              {/* Action Buttons (Non-white cancel button) */}
-              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-mauve-200">
+              {/* Action Buttons */}
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-[#D1B8CC]">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold bg-mauve-100 hover:bg-mauve-200 border border-mauve-300 text-mauve-900 transition-colors shadow-2xs"
+                  className="px-4 py-2 rounded-xl text-xs btn-mauve-tint cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={!isFormValid}
-                  className={`px-5 py-2 rounded-xl text-xs font-bold transition-all ${
+                  className={`px-5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     isFormValid
-                      ? 'bg-mauve-700 hover:bg-mauve-800 text-white shadow-md shadow-mauve-800/25 active:scale-95'
-                      : 'bg-cream-200 text-mauve-400 cursor-not-allowed border border-cream-300'
+                      ? 'btn-mauve-primary active:scale-95'
+                      : 'bg-[#EDE0EB] text-[#8E587F] cursor-not-allowed border border-[#D1B8CC]'
                   }`}
                 >
                   Register Student
