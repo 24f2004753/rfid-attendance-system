@@ -33,7 +33,8 @@ public class AttendanceApplication {
                         new Student("Diya Patel", "CS2024-002", "TAG-B202", "Computer Science & Engineering"),
                         new Student("Rohan Verma", "IT2024-015", "TAG-C303", "Information Technology"),
                         new Student("Ananya Iyer", "EC2024-042", "TAG-D404", "Electronics & Comm Engineering"),
-                        new Student("Kabir Mehta", "ME2024-088", "TAG-E505", "Mechanical Engineering")
+                        new Student("Kabir Mehta", "ME2024-088", "TAG-E505", "Mechanical Engineering"),
+                        new Student("Priya Nair", "ME2024-089", "TAG-E506", "Mechanical Engineering")
                 );
                 studentRepository.saveAll(sampleStudents);
                 System.out.println(">>> [RFID System] Seeded " + sampleStudents.size() + " sample students with active RFID tags.");

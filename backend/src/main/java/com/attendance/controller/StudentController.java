@@ -28,10 +28,13 @@ public class StudentController {
     }
 
     /**
-     * GET /api/students - Retrieve all registered students
+     * GET /api/students - Retrieve registered students (optionally filtered by department)
      */
     @GetMapping
-    public ResponseEntity<List<Student>> getAllStudents() {
+    public ResponseEntity<List<Student>> getAllStudents(@RequestParam(required = false) String department) {
+        if (department != null && !department.trim().isEmpty() && !department.equalsIgnoreCase("ALL")) {
+            return ResponseEntity.ok(studentRepository.findByDepartmentContainingIgnoreCase(department.trim()));
+        }
         return ResponseEntity.ok(studentRepository.findAll());
     }
 

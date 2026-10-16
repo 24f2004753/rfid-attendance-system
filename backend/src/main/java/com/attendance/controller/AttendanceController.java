@@ -13,7 +13,7 @@ import java.util.Map;
 
 /**
  * RESTful API Controller for Attendance verification, live feed, and real-time statistics.
- * Fulfills Expt 1 (REST Architecture) & Expt 6 (Spring Boot Attendance APIs).
+ * Supports Role-Based Faculty Authorization (ME, CE, HOD).
  */
 @RestController
 @RequestMapping("/api/attendance")
@@ -28,16 +28,25 @@ public class AttendanceController {
     }
 
     /**
-     * DTO for incoming RFID tap payload.
+     * DTO for incoming RFID tap payload with optional Faculty authorization context.
      */
     public static class ScanRequest {
         @NotBlank(message = "RFID Tag ID is required")
         private String rfidTagId;
 
+        private String facultyRole; // "HOD" or "FACULTY"
+        private String facultyDepartment; // "Mechanical Engineering", "Computer Science & Engineering", etc.
+
         public ScanRequest() {}
 
         public ScanRequest(String rfidTagId) {
             this.rfidTagId = rfidTagId;
+        }
+
+        public ScanRequest(String rfidTagId, String facultyRole, String facultyDepartment) {
+            this.rfidTagId = rfidTagId;
+            this.facultyRole = facultyRole;
+            this.facultyDepartment = facultyDepartment;
         }
 
         public String getRfidTagId() {
@@ -47,26 +56,52 @@ public class AttendanceController {
         public void setRfidTagId(String rfidTagId) {
             this.rfidTagId = rfidTagId;
         }
+
+        public String getFacultyRole() {
+            return facultyRole;
+        }
+
+        public void setFacultyRole(String facultyRole) {
+            this.facultyRole = facultyRole;
+        }
+
+        public String getFacultyDepartment() {
+            return facultyDepartment;
+        }
+
+        public void setFacultyDepartment(String facultyDepartment) {
+            this.facultyDepartment = facultyDepartment;
+        }
     }
 
     /**
-     * POST /api/attendance/scan - Process RFID tap event
+     * POST /api/attendance/scan - Process RFID tap event with department access checks
      */
     @PostMapping("/scan")
-    public ResponseEntity<AttendanceRecord> processScan(@RequestBody ScanRequest request) {
+    public ResponseEntity<AttendanceRecord> processScan(
+            @RequestBody ScanRequest request,
+            @RequestHeader(value = "X-Faculty-Role", required = false) String headerRole,
+            @RequestHeader(value = "X-Faculty-Department", required = false) String headerDept
+    ) {
         if (request == null || request.getRfidTagId() == null || request.getRfidTagId().trim().isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-        AttendanceRecord record = attendanceService.processScan(request.getRfidTagId());
+
+        String effectiveRole = request.getFacultyRole() != null ? request.getFacultyRole() : headerRole;
+        String effectiveDept = request.getFacultyDepartment() != null ? request.getFacultyDepartment() : headerDept;
+
+        AttendanceRecord record = attendanceService.processScan(request.getRfidTagId(), effectiveRole, effectiveDept);
         return new ResponseEntity<>(record, HttpStatus.CREATED);
     }
 
     /**
-     * GET /api/attendance/today - Get attendance records for the current day
+     * GET /api/attendance/today - Get attendance records for today (optionally filtered by department)
      */
     @GetMapping("/today")
-    public ResponseEntity<List<AttendanceRecord>> getTodayAttendance() {
-        return ResponseEntity.ok(attendanceService.getTodayAttendance());
+    public ResponseEntity<List<AttendanceRecord>> getTodayAttendance(
+            @RequestParam(required = false) String department
+    ) {
+        return ResponseEntity.ok(attendanceService.getTodayAttendance(department));
     }
 
     /**
@@ -78,11 +113,12 @@ public class AttendanceController {
     }
 
     /**
-     * GET /api/attendance/stats - Get real-time metric analytics
+     * GET /api/attendance/stats - Get real-time metrics (optionally filtered by department)
      */
     @GetMapping("/stats")
-    public ResponseEntity<Map<String, Object>> getAttendanceStats() {
-        return ResponseEntity.ok(attendanceService.getAttendanceStats());
+    public ResponseEntity<Map<String, Object>> getAttendanceStats(
+            @RequestParam(required = false) String department
+    ) {
+        return ResponseEntity.ok(attendanceService.getAttendanceStats(department));
     }
 }
-
