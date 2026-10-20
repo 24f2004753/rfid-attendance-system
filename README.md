@@ -28,7 +28,7 @@ The system includes a dedicated Faculty Authentication layer with granular depar
 | **CE Faculty** | `ce_faculty` | `password123` | Computer Science & Engineering | • View CE enrolled students & attendance statistics.<br>• Mark CE students present via RFID badge scans.<br>• **Strictly Forbidden (HTTP 403)** from marking or viewing Mechanical Engineering students. |
 | **Head of Dept (HOD)** | `hod` | `password123` | Universal (All Departments) | • Comprehensive oversight across all branches.<br>• Can mark attendance for **any** student across ME and CE.<br>• Real-time Department switcher dropdown (All, ME, CE) with cross-branch live feeds. |
 
-> **Interactive Quick-Login**: The frontend Login Page (`/`) provides one-click quick login cards for each faculty persona, as well as credentials form authentication.
+> **Credentials Authentication**: The frontend Login Page (`/`) provides secure faculty authentication via username and password credentials.
 >
 > **Backend Enforcement**: Cross-branch RFID scan attempts are rejected at the service level with `HTTP 403 Forbidden` (`"Access Denied: Faculty is not authorized to mark attendance for department: ..."`).
 
