@@ -1,36 +1,51 @@
-# RFID-Based Student Attendance System (Simulation-Ready)
-> **Academic Full-Stack Engineering Course &bull; Laboratory Implementation**  
-> *Production-Ready University IoT Architecture for Student Verification & Real-Time Analytics*
+# RFID-Based Student Attendance System
+
+> A modern, full-stack, simulation-ready university attendance portal featuring automated contactless RFID card tap verification, role-based departmental access control, and real-time attendance analytics.
 
 ---
 
-## 📋 Academic Laboratory Experiments Mapping Table
+## 📌 Overview
 
-This project is architected and implemented to satisfy the learning outcomes of the five required university laboratory experiments:
-
-| Experiment # | Learning Outcome | Focus Domain | Concrete Implementation Files | How Requirement is Fulfilled |
-|---|---|---|---|---|
-| **Expt 1** | **LO1**: Core Web & Mobile Development Concepts | REST API Architecture & Testing | • `docs/postman_collection.json`<br>• `backend/.../controller/`<br>• `simulator/rfid_hardware_emulator.py` | Implementation of standard RESTful HTTP methods (GET, POST, PUT, DELETE), JSON payloads, stateless request-response model, HTTP status codes (200, 201, 204, 404, 409), and an automated Postman Collection v2.1 with assertions. |
-| **Expt 2** | **LO2**: Front-End Development with React | UI Components, JSX & Dynamic Rendering | • `frontend/src/App.jsx`<br>• `frontend/src/components/Navbar.jsx`<br>• `frontend/src/components/MetricCards.jsx`<br>• `frontend/src/components/AttendanceFeed.jsx` | Modular component hierarchy, responsive UI styled with Tailwind CSS, JSX templates, live data tables, conditional status chips, dynamic progress bars, and reactive metric cards. |
-| **Expt 3** | **LO2**: Front-End Development with React | State Management, Hooks & Form Validation | • `frontend/src/context/AttendanceContext.jsx`<br>• `frontend/src/components/StudentManagement.jsx`<br>• `frontend/src/components/RFIDSimulatorModal.jsx` | Centralized state management using React Context API + custom hook `useAttendance()`, React Hooks (`useState`, `useEffect`, `useCallback`, `useMemo`), controlled form inputs with real-time validation (uniqueness, empty checks, length), and interactive RFID badge simulator. |
-| **Expt 6** | **LO4**: Backend Development | Spring Boot RESTful Web Services | • `backend/.../controller/StudentController.java`<br>• `backend/.../controller/AttendanceController.java`<br>• `backend/.../service/AttendanceService.java` | Spring Web MVC controllers providing full Student CRUD (`/api/students`), RFID scan ingestion (`/api/attendance/scan`), attendance logs (`/api/attendance/today`), and real-time statistics (`/api/attendance/stats`), with business rules (duplicate prevention, late threshold). |
-| **Expt 7** | **LO4**: Backend Development | Spring Data JPA / Hibernate Persistence | • `backend/.../model/Student.java`<br>• `backend/.../model/AttendanceRecord.java`<br>• `backend/.../repository/StudentRepository.java`<br>• `backend/.../repository/AttendanceRepository.java` | ORM entity mapping with Jakarta Persistence annotations (`@Entity`, `@Table`, `@Id`, `@GeneratedValue`), Relational `@ManyToOne` association between `AttendanceRecord` and `Student`, unique database constraints, Spring Data JPA repository derived queries, and zero-config H2 persistence. |
+The **RFID-Based Student Attendance System** is an end-to-end IoT-ready application designed to streamline student identity verification and attendance tracking in educational institutions. The system integrates a **Spring Boot RESTful backend**, a **React 18 single-page application (SPA)** styled in an elegant Cream & Mauve palette, and a **Python hardware emulator** that simulates physical 13.56 MHz RFID readers (e.g., RC522 / PN532).
 
 ---
 
-## 🔐 Faculty Authentication & Role-Based Access Control (RBAC)
+## ✨ Key Features
 
-The system includes a dedicated Faculty Authentication layer with granular department-level authorization:
+- **Department-Level Role-Based Access Control (RBAC)**:
+  - Faculty members are scoped strictly to their respective departments (e.g., Mechanical Engineering faculty can only mark ME students; Computer Engineering faculty can only mark CE students).
+  - Cross-department scan attempts are rejected at the service level with `HTTP 403 Forbidden`.
+  - Head of Department (HOD) holds universal authority to mark attendance and monitor live feeds across all university branches.
+- **Contactless RFID Tap Processing**:
+  - Sub-second scan processing with strict idempotency: duplicate taps on the same calendar day are rejected with `HTTP 409 Conflict`.
+  - Punctuality classification: scans before 09:30 AM are marked `PRESENT`, while later scans are flagged `LATE`.
+  - Immediate identification of unregistered badges with `HTTP 404 Not Found`.
+- **Interactive Virtual RFID Badge Scanner**:
+  - Built-in browser modal allowing users to simulate smartcard taps directly from the UI without physical hardware.
+  - Interactive smartcards with departmental lock indicators and direct custom tag dispatcher.
+- **Real-Time Analytical Dashboard**:
+  - Live metric cards tracking total enrollment, present count, punctuality split, and overall attendance percentage.
+  - Real-time attendance feed updating dynamically via background polling.
+- **Hardware RFID Emulator**:
+  - Standalone Python CLI tool with interactive menu, auto-streaming tap modes, and direct command-line arguments.
+- **Full Student Directory Management**:
+  - Searchable student directory with real-time validated enrollment modal, department filtering, and cascade deletion.
+- **Zero-Config Persistent Storage**:
+  - Powered by Spring Data JPA and an embedded H2 database with web console inspection.
 
-| Faculty Role | Username | Password | Department Scope | Permissions & Enforcement |
+---
+
+## 🔐 Faculty Authentication & Role-Based Access Matrix
+
+The system enforces granular authentication at the API and UI layers:
+
+| Role | Username | Password | Department Scope | Permissions & Enforcement |
 |---|---|---|---|---|
-| **ME Faculty** | `me_faculty` | `password123` | Mechanical Engineering | • View ME enrolled students & attendance statistics.<br>• Mark ME students present via RFID badge scans.<br>• **Strictly Forbidden (HTTP 403)** from marking or viewing Computer Engineering students. |
-| **CE Faculty** | `ce_faculty` | `password123` | Computer Science & Engineering | • View CE enrolled students & attendance statistics.<br>• Mark CE students present via RFID badge scans.<br>• **Strictly Forbidden (HTTP 403)** from marking or viewing Mechanical Engineering students. |
-| **Head of Dept (HOD)** | `hod` | `password123` | Universal (All Departments) | • Comprehensive oversight across all branches.<br>• Can mark attendance for **any** student across ME and CE.<br>• Real-time Department switcher dropdown (All, ME, CE) with cross-branch live feeds. |
+| **ME Faculty** | `me_faculty` | `password123` | Mechanical Engineering | • View ME student directory and department metrics.<br>• Mark ME students present via RFID badge scans.<br>• **Strictly Forbidden (HTTP 403)** from scanning or viewing CE students. |
+| **CE Faculty** | `ce_faculty` | `password123` | Computer Science & Engineering | • View CE student directory and department metrics.<br>• Mark CE students present via RFID badge scans.<br>• **Strictly Forbidden (HTTP 403)** from scanning or viewing ME students. |
+| **Head of Dept (HOD)** | `hod` | `password123` | Universal (All Departments) | • **Unrestricted Oversight**: Can view and mark attendance for any student across all branches.<br>• Interactive department filter dropdown (All Branches, ME, CE) with live feed switching. |
 
-> **Credentials Authentication**: The frontend Login Page (`/`) provides secure faculty authentication via username and password credentials.
->
-> **Backend Enforcement**: Cross-branch RFID scan attempts are rejected at the service level with `HTTP 403 Forbidden` (`"Access Denied: Faculty is not authorized to mark attendance for department: ..."`).
+> **Backend Security Enforcement**: Role and department headers (`X-Faculty-Role`, `X-Faculty-Department`) are validated on each scan. Attempting to scan a student outside the authenticated faculty's department immediately triggers an `HTTP 403 Forbidden` response.
 
 ---
 
@@ -38,8 +53,8 @@ The system includes a dedicated Faculty Authentication layer with granular depar
 
 ```
                                   +---------------------------------------+
-                                  |     Vite + React 18+ Frontend         |
-                                  |       http://localhost:5173           |
+                                  |       React 18 + Vite Frontend        |
+                                  |        http://localhost:5173          |
                                   +-------------------+-------------------+
                                                       |
                                                       | HTTP / REST (Fetch API)
@@ -53,168 +68,178 @@ The system includes a dedicated Faculty Authentication layer with granular depar
 
 ---
 
-## 📂 Project File Tree
+## 📂 Project Structure
 
 ```
 rfid-attendance-system/
 ├── backend/
-│   ├── pom.xml                                      # Maven build config (Spring Boot 3, Data JPA, H2)
+│   ├── pom.xml                                      # Maven build specification (Spring Boot 3, JPA, H2)
 │   ├── mvnw.cmd / mvnw                              # Cross-platform Maven wrapper scripts
 │   └── src/main/java/com/attendance/
-│       ├── AttendanceApplication.java               # Spring Boot entry point & initial data seeder
+│       ├── AttendanceApplication.java               # Spring Boot entry point & student seed runner
 │       ├── config/
-│       │   └── CorsConfig.java                      # Global CORS configuration for React frontend
+│       │   └── CorsConfig.java                      # Global CORS filter for frontend integration
 │       ├── model/
-│       │   ├── Student.java                         # Student JPA Entity (PK, Roll No, RFID Tag, Dept)
-│       │   ├── AttendanceRecord.java                # AttendanceRecord JPA Entity (ManyToOne Student)
-│       │   └── AttendanceStatus.java                # Enum (PRESENT, LATE)
+│       │   ├── Student.java                         # Student JPA entity (Roll No, RFID Tag, Dept)
+│       │   ├── AttendanceRecord.java                # AttendanceRecord entity (ManyToOne Student)
+│       │   └── AttendanceStatus.java                # Status enum (PRESENT, LATE)
 │       ├── repository/
-│       │   ├── StudentRepository.java               # Spring Data JPA Repository for Students
-│       │   └── AttendanceRepository.java            # Spring Data JPA Repository for Attendance
+│       │   ├── StudentRepository.java               # Spring Data JPA queries for students
+│       │   └── AttendanceRepository.java            # Spring Data JPA queries for attendance logs
 │       ├── service/
-│       │   └── AttendanceService.java               # Business logic (idempotency, duplicate check, stats)
+│       │   └── AttendanceService.java               # Business logic, RBAC checks & analytics
 │       └── controller/
-│           ├── StudentController.java               # RESTful CRUD: GET, POST, PUT, DELETE /api/students
-│           └── AttendanceController.java            # Scan verification, live feed & stats APIs
+│           ├── AuthController.java                  # Faculty login & user registry endpoints
+│           ├── StudentController.java               # Student CRUD REST APIs
+│           └── AttendanceController.java            # RFID scan verification & live feed APIs
 │       └── resources/
-│           └── application.properties               # H2 database & server configuration
+│           └── application.properties               # Server port & H2 database configuration
 ├── frontend/
 │   ├── package.json                                 # React 18, Vite, Tailwind CSS, Lucide icons
-│   ├── index.html                                   # HTML5 shell with Google Inter/JetBrains fonts
-│   ├── vite.config.js                               # Vite bundler configuration & backend proxy
-│   ├── tailwind.config.js                           # Tailwind utility setup
+│   ├── index.html                                   # HTML shell
+│   ├── vite.config.js                               # Vite build configuration & server proxy
+│   ├── tailwind.config.js                           # Tailwind CSS theme configuration
 │   └── src/
-│       ├── main.jsx                                 # React DOM root entry
-│       ├── App.jsx                                  # Master layout, toast notifications & tab views
-│       ├── index.css                                # Glassmorphism & holographic RFID badge styles
+│       ├── main.jsx                                 # React DOM entry point
+│       ├── App.jsx                                  # Application layout & authentication gating
+│       ├── index.css                                # Cream, Mauve, and White design system
 │       ├── context/
-│       │   └── AttendanceContext.jsx                # Global state (students, logs, stats, actions)
+│       │   └── AttendanceContext.jsx                # Global state provider & REST API connector
 │       └── components/
-│           ├── Navbar.jsx                           # Lab badges, live polling switch, scanner modal CTA
-│           ├── MetricCards.jsx                      # Enrolled, present today, percentage, punctuality
-│           ├── StudentManagement.jsx                # Search, table, delete, validated Add Student modal
-│           ├── AttendanceFeed.jsx                   # Today's live log feed with status filters
-│           └── RFIDSimulatorModal.jsx               # Interactive virtual smartcards & custom tag tester
+│           ├── LoginPage.jsx                        # Pure username & password faculty sign-in form
+│           ├── Navbar.jsx                           # Navigation bar with department scope & branch switcher
+│           ├── MetricCards.jsx                      # Real-time analytics metric cards
+│           ├── StudentManagement.jsx                # Student directory with search, delete, and add modal
+│           ├── AttendanceFeed.jsx                   # Live reverse-chronological attendance activity feed
+│           └── RFIDSimulatorModal.jsx               # Interactive contactless RFID smartcard simulator
 ├── simulator/
-│   └── rfid_hardware_emulator.py                    # Standalone Python CLI & auto-stream card emulator
-├── docs/
-│   └── postman_collection.json                      # Postman Collection v2.1 with tests & assertions
-└── README.md                                        # Master documentation & lab compliance report
+│   └── rfid_hardware_emulator.py                    # Standalone Python hardware emulator CLI
+└── docs/
+    └── postman_collection.json                      # Automated Postman Collection v2.1 test suite
 ```
 
 ---
 
-## 🚀 Execution Instructions (Step-by-Step)
+## 🚀 Getting Started
 
-To run the complete full-stack environment concurrently, open **three terminal windows**:
+### Prerequisites
+- **Java**: JDK 17 or higher
+- **Node.js**: v18.0 or higher (with `npm`)
+- **Python**: 3.8 or higher (with `requests` library)
 
-### 1. Terminal 1: Start the Spring Boot Backend
+---
+
+### Step 1: Start the Backend (Spring Boot)
+
+Open a terminal and navigate to the `backend/` directory:
 
 ```bash
-# Navigate to backend directory
 cd backend
 
-# Option A: If Maven is installed in your PATH
-mvn spring-boot:run
-
-# Option B: Using the included wrapper script (Windows)
+# On Windows:
 .\mvnw.cmd spring-boot:run
 
-# Option C: Using the included wrapper script (Linux/macOS)
+# On Linux / macOS:
 ./mvnw spring-boot:run
 ```
 
-* Backend will start at: `http://localhost:8080`
-* H2 Database Web Console: `http://localhost:8080/h2-console`
-  * **JDBC URL**: `jdbc:h2:mem:attendancedb`
-  * **User Name**: `sa`
-  * **Password**: *(leave blank)*
-* Pre-seeded students: 5 sample students across CS, IT, EC, and ME departments are automatically populated upon launch.
+- **Backend API**: `http://localhost:8080`
+- **H2 Database Console**: `http://localhost:8080/h2-console`
+  - **JDBC URL**: `jdbc:h2:mem:attendancedb`
+  - **User**: `sa`
+  - **Password**: *(leave empty)*
+- **Pre-seeded Records**: The database automatically initializes with 23 registered students across CSE, ME, and ECE.
 
 ---
 
-### 2. Terminal 2: Start the React Frontend (Vite)
+### Step 2: Start the Frontend Dashboard (React + Vite)
+
+Open a second terminal and navigate to the `frontend/` directory:
 
 ```bash
-# Navigate to frontend directory
 cd frontend
 
-# Install dependencies (only required on first setup)
+# Install dependencies (first run only)
 npm install
 
-# Start Vite development server
+# Start development server
 npm run dev
 ```
 
-* Frontend dashboard will be live at: `http://localhost:5173`
-* Features:
-  * **Live Polling**: Automatically refreshes today's attendance every 3 seconds.
-  * **Interactive Badge Scanner**: Click the **"RFID Badge Scanner"** button to simulate physical contactless smartcard taps directly from the browser.
-  * **Form Validation**: Click **"Add Student"** to test real-time validation rules (prevents empty inputs and duplicate roll numbers/tags).
+- **Frontend URL**: `http://localhost:5173`
+- Sign in with any of the faculty credentials (`me_faculty`, `ce_faculty`, or `hod` with password `password123`).
 
 ---
 
-### 3. Terminal 3: Run the Hardware RFID Simulator (Python)
+### Step 3: Run the RFID Hardware Simulator (Python)
 
-The simulator uses the Python `requests` library to emulate physical 13.56 MHz RFID sensor broadcasts:
+Open a third terminal and run the hardware emulator script:
 
 ```bash
-# Navigate to simulator directory
 cd simulator
 
-# Interactive Menu Mode (Choose between auto-stream, manual tag tap, stress test, or view feed)
+# Interactive Menu Mode (choose auto-streaming, manual tag tap, or live feed)
 python rfid_hardware_emulator.py
 
-# OR: Automated Continuous Streaming Mode (Taps student badges every 3 seconds)
+# Automated Continuous Streaming (taps cards every 3 seconds)
 python rfid_hardware_emulator.py --auto --interval 3
 
-# OR: Instant Single-Tag Test as HOD (Universal access)
+# Single Tag Tap as HOD (Universal Access)
 python rfid_hardware_emulator.py --tag TAG-A101 --role HOD
 
-# OR: Instant Single-Tag Test as ME Faculty (Authorized for ME; 403 on CE)
-python rfid_hardware_emulator.py --tag TAG-M301 --role FACULTY --dept "Mechanical Engineering"
+# Single Tag Tap as ME Faculty (Authorized for ME; 403 on CE)
+python rfid_hardware_emulator.py --tag TAG-E505 --role FACULTY --dept "Mechanical Engineering"
 ```
 
 ---
 
-## 🧪 Postman API Verification (Expt 1 Compliance)
+## 📡 REST API Reference
 
-1. Open **Postman**.
-2. Click **Import** &bull; select `docs/postman_collection.json`.
-3. Pre-configured endpoints included in the collection:
-   * `GET {{baseUrl}}/api/students` &bull; List all registered students
-   * `GET {{baseUrl}}/api/students/1` &bull; Fetch student by ID
-   * `POST {{baseUrl}}/api/students` &bull; Enroll new student with validation
-   * `PUT {{baseUrl}}/api/students/1` &bull; Update student record
-   * `DELETE {{baseUrl}}/api/students/5` &bull; Delete student record
-   * `POST {{baseUrl}}/api/attendance/scan` &bull; Valid card tap (HTTP 201)
-   * `POST {{baseUrl}}/api/attendance/scan` &bull; Duplicate scan rejection test (HTTP 409)
-   * `POST {{baseUrl}}/api/attendance/scan` &bull; Unregistered tag test (HTTP 404)
-   * `GET {{baseUrl}}/api/attendance/today` &bull; Today's verified feed
-   * `GET {{baseUrl}}/api/attendance/stats` &bull; Analytical metrics computation
-4. Run the collection runner to execute all assertions and test scripts automatically.
+### Authentication Endpoints
+| Method | Endpoint | Description | Sample Payload |
+|---|---|---|---|
+| `POST` | `/api/auth/login` | Authenticate faculty member | `{"username": "me_faculty", "password": "password123"}` |
+| `GET` | `/api/auth/users` | List available faculty accounts | *None* |
 
----
+### Student Management Endpoints
+| Method | Endpoint | Description | Query Parameters |
+|---|---|---|---|
+| `GET` | `/api/students` | List registered students | `?department=Mechanical+Engineering` *(optional)* |
+| `GET` | `/api/students/{id}` | Get student by ID | *None* |
+| `POST` | `/api/students` | Enroll a new student | Body: `{"name": "...", "rollNo": "...", "rfidTagId": "...", "department": "..."}` |
+| `PUT` | `/api/students/{id}` | Update student details | Body: `{"name": "...", "rollNo": "...", "rfidTagId": "...", "department": "..."}` |
+| `DELETE` | `/api/students/{id}` | Delete a student and cascade logs | *None* |
+| `DELETE` | `/api/students` | Clear all students and logs | *None* |
 
-## 🛡️ Business Logic & Error Handling Rules
-
-1. **Card Authentication (404 Not Found)**:
-   * When an RFID tag is tapped, the backend verifies if the tag is registered in the `students` table.
-   * If unregistered, the server immediately returns `404 Not Found` with an informative error message.
-2. **Duplicate Prevention / Idempotency (409 Conflict)**:
-   * A student can only be checked in **once per calendar day** (`00:00:00` to `23:59:59`).
-   * Subsequent taps on the same day are rejected with `409 Conflict`, preserving data integrity.
-3. **Punctuality Classification**:
-   * Scans recorded on or before `09:30 AM` are classified as `PRESENT`.
-   * Scans recorded after `09:30 AM` are classified as `LATE`.
-4. **Real-Time Analytics Calculation**:
-   * Total enrolled students, total present today, punctuality split, and overall attendance percentage are calculated dynamically.
+### Attendance Endpoints
+| Method | Endpoint | Description | Headers / Payload |
+|---|---|---|---|
+| `POST` | `/api/attendance/scan` | Process an RFID scan tap event | `{"rfidTagId": "TAG-A101"}`<br>Headers: `X-Faculty-Role`, `X-Faculty-Department` |
+| `GET` | `/api/attendance/today` | Fetch today's verified attendance records | `?department=...` *(optional filter)* |
+| `GET` | `/api/attendance/stats` | Compute real-time analytics & percentages | `?department=...` *(optional filter)* |
 
 ---
 
-## 👥 University Lab Course Submission
+## 🧪 Automated API Testing
 
-* **Project Title**: RFID-Based Attendance System (Simulation-Ready)
-* **Status**: Complete & Production-Ready
-* **Turnaround Window**: Completed within 24 hours
-* **Target Platforms**: Windows, macOS, Linux
+A complete **Postman Collection v2.1** is included at [`docs/postman_collection.json`](docs/postman_collection.json).
+
+### Running in Postman:
+1. Open the **Postman** application.
+2. Click **Import** and select `docs/postman_collection.json`.
+3. Use the **Collection Runner** to execute all tests automatically against `http://localhost:8080`.
+
+### Running via Terminal (Newman):
+```powershell
+npx newman run docs/postman_collection.json
+```
+
+---
+
+## 🛡️ Business Rules & Integrity Verification
+
+1. **Tag Authentication**: Every scan verifies the RFID tag against the `students` table. Unregistered badges are immediately rejected with `404 Not Found`.
+2. **Department Boundary Enforcement**: Scans submitted by faculty members are validated against the student's enrolled department. Out-of-scope taps return `403 Forbidden`.
+3. **Duplicate Check-In Prevention**: Students may check in at most once per calendar day. Subsequent taps return `409 Conflict`.
+4. **Punctuality Evaluation**: Taps recorded at or before `09:30 AM` are classified as `PRESENT`. Taps recorded after `09:30 AM` are marked as `LATE`.
+5. **Relational Data Cascading**: Deleting a student cascades to remove their associated attendance history, preserving referential integrity.
